@@ -1,6 +1,8 @@
 const { path } = require('@hapi/joi/lib/errors');
 const { createHandler, readAllindikator_people, updateIndikatorHandler, deleteIndikatorHandler} = require('./handler_indikator_people');
 const { createIndikatorPerilakuHandler, readIndikatorPerilakuHandler, updateIndikatorPerilakuHandler, deleteIndikatorPerilakuHandler} = require('./handler_indikator_perilaku');
+const {createPegawai, readAllPegawai, updatePegawaiHandler, deletePegawaiHandler} = require('./handler-pegawai');
+
 
 const routes = [
     //Indikator People
@@ -46,6 +48,28 @@ const routes = [
         path: '/indikator_perilaku_delete/{id}',
         handler: deleteIndikatorPerilakuHandler
     }
+    //pegawai
+     {
+        method: 'POST',
+        path: '/createPegawai',
+        handler: createPegawai,
+    },
+    {
+        method: 'GET',
+        path: '/readPegawai',
+        handler: readAllPegawai,
+    },
+    {
+        method: 'PUT',
+        path: '/updatePegawai/{id}',
+        handler: updatePegawaiHandler,
+    },
+    {
+        method: 'DELETE',
+        path: '/deletePegawai/{id}',
+        handler: deletePegawaiHandler,
+    }
+     
 ];
 
 module.exports = routes;
