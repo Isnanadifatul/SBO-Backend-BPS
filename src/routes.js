@@ -47,7 +47,7 @@ const routes = [
         method: 'DELETE',
         path: '/indikator_perilaku_delete/{id}',
         handler: deleteIndikatorPerilakuHandler
-    }
+    },
     //pegawai
      {
         method: 'POST',
