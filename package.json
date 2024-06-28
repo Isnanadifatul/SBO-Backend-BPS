@@ -4,30 +4,30 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Isnanadifatul/SBO-Backend-BPS.git"
+    "url": "git+https://github.com/Isnanadifatul/SBO-Backend.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Isnanadifatul/SBO-Backend-BPS.git/issues"
+    "url": "https://github.com/Isnanadifatul/SBO-Backend/issues"
   },
-  "homepage": "https://github.com/Isnanadifatul/SBO-Backend-BPS.git#readme",
+  "homepage": "https://github.com/Isnanadifatul/SBO-Backend#readme",
   "dependencies": {
     "@hapi/cookie": "^12.0.1",
     "@hapi/hapi": "^21.3.10",
     "@hapi/inert": "^7.1.0",
+    "@hapi/joi": "^17.1.1",
     "@hapi/vision": "^7.0.3",
-    "bcrypt": "^5.1.1",
     "handlebars": "^4.7.8",
     "hapi-geo-locate": "^4.1.1",
+    "joi": "^17.13.3",
     "mysql2": "^3.10.1",
-    "sequelize": "^6.37.3",
-    "@hapi/joi": "^17.1.1"
+    "nodemon": "^3.1.4",
+    "sequelize": "^6.37.3"
   }
 }

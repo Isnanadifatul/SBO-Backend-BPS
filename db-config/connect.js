@@ -1,4 +1,4 @@
-const Sequelize = require('sequelize');
+const {Sequelize} = require('sequelize');
 
 // database connection
 const connection = new Sequelize(
@@ -12,4 +12,4 @@ const connection = new Sequelize(
   },
 );
 
-module.exports = connection;
+module.exports.connect = connection;
