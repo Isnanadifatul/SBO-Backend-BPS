@@ -33,6 +33,21 @@ async function readAllPegawai() {
     }
   }
 
+  /*
+  // Function untuk mendapatkan pegawai berdasarkan ID
+async function getPegawaiById(id) {
+  try {
+      const pegawai = await Pegawai.findByPk(id); // Menggunakan findByPk untuk mencari berdasarkan primary key
+      if (!pegawai) {
+          throw new Error('Pegawai tidak ditemukan');
+      }
+      return pegawai;
+  } catch (error) {
+      console.error('Error membaca data pegawai:', error);
+      throw error; // Melemparkan kesalahan
+  }
+}
+  */
 
   const updatePegawaiHandler = async (request, h) => {
     try {
@@ -79,5 +94,5 @@ async function readAllPegawai() {
 
 
   
-module.exports = {createPegawai, readAllPegawai,updatePegawaiHandler, deletePegawaiHandler};
+module.exports = {createPegawai, readAllPegawai,updatePegawaiHandler, deletePegawaiHandler, /*getPegawaiById*/};
 

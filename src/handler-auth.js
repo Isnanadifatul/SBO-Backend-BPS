@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const Joi = require('joi');
 const { updateAuthenticationById, Authentication } = require('../models/authentication');
+const { Pegawai } = require('../models/pegawai');
 
 // Fungsi untuk memeriksa apakah nip sudah ada
 async function isUsernameExist(nip) {
@@ -98,11 +99,33 @@ const loginHandler = async (request, h) => {
       console.log('Password is incorrect');
       return h.response('Password is incorrect').code(401);
     }
+
+    //Mengambil date pegawai yang berelasi
+    const pegawai = await Pegawai.findOne({
+      where: {nip},
+      attributes: ['nip', 'nama']
+  }); //hanya mengambil atribut nip dan nama
     
+  if (!pegawai) {
+    console.log('Pegawai not found for the given NIP');
+    return h.response('Pegawai not found').code(404);
+  }
+
+    // Log pegawai information if found
+    console.log('Pegawai found:', pegawai.toJSON());
+
     // Set cookie untuk sesi
     h.state('userSession', { nip });
 
-    return h.response('Login Successful');
+     // Mengembalikan data nip, nama dari Pegawai dan role dari Authentication
+     return h.response({
+      message: 'Login Successful',
+      user: {
+        nip: pegawai.nip,
+        nama: pegawai.nama,
+        role: user.role
+      }
+    });
   } catch (error) {
     console.error('Error during login:', error);
     return h.response('Internal Server Error').code(500);
