@@ -5,7 +5,7 @@ const mysql = require('mysql2/promise');
 const dbConnection = connection.connect;
 
 // create database using models
-const Pegawai = connection.define('Pegawai', {
+const Pegawai = dbConnection.define('Pegawai', {
   nip: {
     type: DataTypes.STRING,
     primaryKey: true,
