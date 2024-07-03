@@ -1,8 +1,11 @@
 const { path } = require('@hapi/joi/lib/errors');
 const { createHandler, readAllindikator_people, updateIndikatorHandler, deleteIndikatorHandler} = require('./handler_indikator_people');
+/*
 const { createIndikatorPerilakuHandler, readIndikatorPerilakuHandler, updateIndikatorPerilakuHandler, deleteIndikatorPerilakuHandler} = require('./handler_indikator_perilaku');
+*/
 const {createPegawai, readAllPegawai, updatePegawaiHandler, deletePegawaiHandler} = require('./handler-pegawai');
-
+const {createAuthentication, loginHandler, logoutHandler, updateAuthenticationHandler} = require('./handler-auth');
+const { options } = require('joi');
 
 const routes = [
     //Indikator People
@@ -26,7 +29,7 @@ const routes = [
         path: '/indikator_people_delete/{id}',
         handler: deleteIndikatorHandler
     },
-
+/*
     //Indikator Perilaku
     {
         method: 'POST',
@@ -48,6 +51,7 @@ const routes = [
         path: '/indikator_perilaku_delete/{id}',
         handler: deleteIndikatorPerilakuHandler
     },
+    */
     //pegawai
      {
         method: 'POST',
@@ -68,6 +72,33 @@ const routes = [
         method: 'DELETE',
         path: '/deletePegawai/{id}',
         handler: deletePegawaiHandler,
+    },
+   //Authentication
+    {
+        method: 'POST',
+        path: '/login',
+        handler: loginHandler,
+        options: {
+            auth: false
+        }
+    },
+    {
+        method: 'POST',
+        path: '/createAuth',
+        handler: createAuthentication,
+    },
+    {
+        method: 'PUT',
+        path: '/updateAuth/{id}',
+        handler: updateAuthenticationHandler,
+    },
+    {
+        method: 'POST',
+        path: '/logout',
+        handler: logoutHandler,
+        options: {
+            auth: 'session'
+        }
     }
      
 ];
