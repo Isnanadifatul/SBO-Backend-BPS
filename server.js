@@ -2,6 +2,7 @@ const routes = require('./src/routes');
 const Hapi = require('@hapi/hapi');
 const inert = require('@hapi/inert');
 const Boom = require('@hapi/boom');
+const Cookie = require('@hapi/cookie');
 const path = require('path');
 const connection = require('./db-config/connect');
 
@@ -9,7 +10,7 @@ const init = async () => {
 
     const server = Hapi.Server({
         host: 'localhost',
-        port: 5003,
+        port: 5000,
         routes: {
             cors: {
                 origin: ['*'],
@@ -17,14 +18,22 @@ const init = async () => {
         },
     });
 
-    server.state('userSession', {
-        ttl: 24 * 60 * 60 * 1000,
-        encoding: 'base64json',
-        isSecure: false,
-        isHttpOnly: true,
-        clearInvalid: false,
-        strictHeader: true,
-      });
+    await server.register(Cookie);
+
+    server.auth.strategy('session', 'cookie', {
+      cookie: {
+        name: 'userSession',
+        password: 'a_very_secure_password_that_should_be_kept_secret', // Ganti dengan kunci rahasia yang kuat
+        isSecure: false, // Set to true in production
+        isHttpOnly: true, // Menjaga cookie agar hanya dapat diakses oleh server
+        isSameSite: 'Lax', // Meningkatkan keamanan cookie
+        ttl: 24 * 60 * 60 * 1000 // 1 hari dalam milidetik
+      },
+      redirectTo: false
+    });
+  
+    server.auth.default('session');
+  
 
     await server.register([{
         plugin: require("hapi-geo-locate"),
@@ -37,9 +46,6 @@ const init = async () => {
     },
     {
         plugin: require('@hapi/vision')
-    },
-    {
-        plugin: require('@hapi/cookie')
     },
 ]);
 
@@ -55,9 +61,6 @@ server.views({
         allowProtoMethodsByDefault: true     // Tambahkan ini
     }
   });
-
-
-
 
     server.route(routes);
 

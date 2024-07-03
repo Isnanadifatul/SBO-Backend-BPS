@@ -10,9 +10,6 @@ async function createPegawai(request, h) {
     // Insert user baru
     await insertUser(nip, nama, stat_jabatan, golongan_akhir, tmt_golongan, pendidikan, tanggal_lulus, jenis_kelamin, tanggal_lahir);
     
-
-   
-        // Proses registrasi sukses
     
         // Mengarahkan pengguna ke halaman lihat data pegawai
         return h.response('input sukses').code(202); // Pengalihan sementara (302)
