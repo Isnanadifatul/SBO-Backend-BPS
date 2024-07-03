@@ -1,6 +1,6 @@
 //const bcrypt = require('bcrypt');
 const {DataTypes, Op} = require('sequelize');
-const {insertUser, updatePegawaiById, deletePegawaiById, Pegawai} = require('../models/pegawai');
+const {insertUser, getPegawaiById, updatePegawaiById, deletePegawaiById, Pegawai} = require('../models/pegawai');
 
 async function createPegawai(request, h) {
   try {
@@ -33,22 +33,19 @@ async function readAllPegawai() {
     }
   }
 
-  /*
-  // Function untuk mendapatkan pegawai berdasarkan ID
-async function getPegawaiById(id) {
-  try {
-      const pegawai = await Pegawai.findByPk(id); // Menggunakan findByPk untuk mencari berdasarkan primary key
-      if (!pegawai) {
-          throw new Error('Pegawai tidak ditemukan');
-      }
-      return pegawai;
-  } catch (error) {
-      console.error('Error membaca data pegawai:', error);
-      throw error; // Melemparkan kesalahan
-  }
-}
-  */
+//handler get by id pegawai
+  const getPegawaiByIdhandler = async (request, h) => {
+    const id = request.params.id;
+    
+    try {
+      const pegawai = await getPegawaiById(id);
+      return h.response(pegawai).code(200);
+    } catch (error) {
+      return h.response({ error: error.message }).code(404);
+    }
+  };  
 
+//Function untuk mengupdate pegawai
   const updatePegawaiHandler = async (request, h) => {
     try {
       const { id } = request.params; // Asumsi ID pegawai datang dari parameter URL
@@ -94,5 +91,5 @@ async function getPegawaiById(id) {
 
 
   
-module.exports = {createPegawai, readAllPegawai,updatePegawaiHandler, deletePegawaiHandler, /*getPegawaiById*/};
+module.exports = {createPegawai, readAllPegawai,updatePegawaiHandler, deletePegawaiHandler, getPegawaiByIdhandler};
 

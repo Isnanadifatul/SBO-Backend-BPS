@@ -4,7 +4,7 @@ const { createHandler, readAllindikator_people, updateIndikatorHandler, deleteIn
 /*
 const { createIndikatorPerilakuHandler, readIndikatorPerilakuHandler, updateIndikatorPerilakuHandler, deleteIndikatorPerilakuHandler} = require('./handler_indikator_perilaku');
 */
-const {createPegawai, readAllPegawai, getPegawaiById, updatePegawaiHandler, deletePegawaiHandler} = require('./handler-pegawai');
+const {createPegawai, readAllPegawai, getPegawaiByIdhandler, updatePegawaiHandler, deletePegawaiHandler} = require('./handler-pegawai');
 const {createAuthentication, loginHandler, logoutHandler, updateAuthenticationHandler} = require('./handler-auth');
 const { options } = require('joi');
 
@@ -101,13 +101,11 @@ const routes = [
             auth: 'session'
         }
     },
-    /*
     {
         method:'GET',
-        path: '/readPegawaiByID',
-        handler: getPegawaiById,
+        path: '/readPegawaiByID/{id}',
+        handler: getPegawaiByIdhandler,
     }
-    */
      
 ];
 

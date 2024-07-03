@@ -5,6 +5,11 @@ const Boom = require('@hapi/boom');
 const Cookie = require('@hapi/cookie');
 const path = require('path');
 const connection = require('./db-config/connect');
+const cors = require('cors');
+const app = Hapi();
+
+
+await sr
 
 const init = async () => {
 
@@ -13,7 +18,8 @@ const init = async () => {
         port: 5000,
         routes: {
             cors: {
-                origin: ['*'],
+                origin: ['http://localhost:5173'],
+                Credentials: true
             }
         },
     });

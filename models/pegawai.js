@@ -93,7 +93,21 @@ const Pegawai = dbConnection.define('Pegawai', {
     }
   }
 
-
-
-
-module.exports = {Pegawai, insertUser, updatePegawaiById, deletePegawaiById };
+  //read pegawai by ID
+  async function getPegawaiById(id) {
+    try {
+      // Convert id to string to maintain precision
+      const idString = String(id);
+  
+      const pegawai = await Pegawai.findByPk(idString); // Menggunakan findByPk dengan id dalam bentuk string
+      if (!pegawai) {
+        throw new Error('Pegawai tidak ditemukan');
+      }
+      return pegawai;
+    } catch (error) {
+      console.error('Error membaca data pegawai:', error);
+      throw error; // Melemparkan kesalahan
+    }
+  }
+  
+module.exports = {Pegawai, insertUser, updatePegawaiById, deletePegawaiById, getPegawaiById };
