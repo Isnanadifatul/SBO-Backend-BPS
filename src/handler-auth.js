@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const JWT = require('jsonwebtoken');
 const Joi = require('joi');
 const { updateAuthenticationById, Authentication } = require('../models/authentication');
 const { Pegawai } = require('../models/pegawai');
@@ -99,6 +100,16 @@ const loginHandler = async (request, h) => {
       console.log('Password is incorrect');
       return h.response('Password is incorrect').code(401);
     }
+     // Generate JWT token
+     const token = JWT.sign(
+      {
+        userId: user.id_auth,
+        username: user.nama,
+        role: user.role // Include any additional data you want in the token payload
+      },
+      process.env.JWT_SECRET, // Secret key for signing the token, should be stored securely
+      { expiresIn: '1h' } // Token expiry time
+    );
 
     //Mengambil date pegawai yang berelasi
     const pegawai = await Pegawai.findOne({
@@ -114,32 +125,34 @@ const loginHandler = async (request, h) => {
     // Log pegawai information if found
     console.log('Pegawai found:', pegawai.toJSON());
 
-    // Set cookie untuk sesi
-    h.state('userSession', { nip });
-
+    
      // Mengembalikan data nip, nama dari Pegawai dan role dari Authentication
      return h.response({
       message: 'Login Successful',
+      token: token,
       user: {
         nip: pegawai.nip,
         nama: pegawai.nama,
         role: user.role
       }
     });
+    
   } catch (error) {
     console.error('Error during login:', error);
-    return h.response('Internal Server Error').code(500);
+    return h.response({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      message: 'An internal server error occurred'
+    }).code(500);
   }
 };
 
 const logoutHandler = (request, h) => {
   try {
-      // Hapus both userSession and username cookies
-      h.unstate('userSession');
-   
+     
 
-      // Redirect ke halaman login
-      return h.response('Logout Successful');
+      // Redirect ke halaman loginy
+      return h.redirect('Logout Successful');
   } catch (error) {
       console.error(error);
       return h.response('Internal Server Error').code(500);

@@ -2,14 +2,12 @@ const routes = require('./src/routes');
 const Hapi = require('@hapi/hapi');
 const inert = require('@hapi/inert');
 const Boom = require('@hapi/boom');
-const Cookie = require('@hapi/cookie');
 const path = require('path');
 const connection = require('./db-config/connect');
-const cors = require('cors');
-const app = Hapi();
+const HapiAuthJwt2 = require('hapi-auth-jwt2');
+const { validate } = require('./src/validate');
+require('dotenv').config();
 
-
-await sr
 
 const init = async () => {
 
@@ -18,30 +16,15 @@ const init = async () => {
         port: 5000,
         routes: {
             cors: {
-                origin: ['http://localhost:5173'],
-                Credentials: true
+                origin: ['http://127.0.0.1:5500/'],
+                credentials: true
             }
         },
     });
 
-    await server.register(Cookie);
-
-    server.auth.strategy('session', 'cookie', {
-      cookie: {
-        name: 'userSession',
-        password: 'a_very_secure_password_that_should_be_kept_secret', // Ganti dengan kunci rahasia yang kuat
-        isSecure: false, // Set to true in production
-        isHttpOnly: true, // Menjaga cookie agar hanya dapat diakses oleh server
-        isSameSite: 'Lax', // Meningkatkan keamanan cookie
-        ttl: 24 * 60 * 60 * 1000 // 1 hari dalam milidetik
-      },
-      redirectTo: false
-    });
-  
-    server.auth.default('session');
-  
-
-    await server.register([{
+    await server.register([
+        HapiAuthJwt2,
+        {
         plugin: require("hapi-geo-locate"),
         options: {
             enabledByDefault: true
@@ -54,6 +37,15 @@ const init = async () => {
         plugin: require('@hapi/vision')
     },
 ]);
+
+server.auth.strategy('jwt', 'jwt', {
+    key: process.env.JWT_SECRET, // Secret key for signing JWT
+    validate, // validate function defined above
+    verifyOptions: { algorithms: ['HS256'] } // opsi verifikasi
+});
+
+server.auth.default('jwt');
+
 
 // Konfigurasi rendering view dengan handlebars (contoh)
 server.views({

@@ -65,6 +65,11 @@ const routes = [
         handler: readAllPegawai,
     },
     {
+        method:'GET',
+        path: '/readPegawaiByID/{id}',
+        handler: getPegawaiByIdhandler,
+    },
+    {
         method: 'PUT',
         path: '/updatePegawai/{id}',
         handler: updatePegawaiHandler,
@@ -87,6 +92,9 @@ const routes = [
         method: 'POST',
         path: '/createAuth',
         handler: createAuthentication,
+        options: {
+            auth: false
+        }
     },
     {
         method: 'PUT',
@@ -97,15 +105,18 @@ const routes = [
         method: 'POST',
         path: '/logout',
         handler: logoutHandler,
-        options: {
-            auth: 'session'
-        }
     },
     {
-        method:'GET',
-        path: '/readPegawaiByID/{id}',
-        handler: getPegawaiByIdhandler,
-    }
+        method: 'GET',
+        path: '/protected',
+        options: {
+          auth: 'jwt', // Require JWT authentication
+          handler: (request, h) => {
+            return h.response({ message: 'You have accessed a protected route' });
+          }
+        }
+      }
+    
      
 ];
 
