@@ -152,7 +152,7 @@ const logoutHandler = (request, h) => {
      
 
       // Redirect ke halaman loginy
-      return h.redirect('Logout Successful');
+      return h.response('Logout Successful');
   } catch (error) {
       console.error(error);
       return h.response('Internal Server Error').code(500);
