@@ -65,6 +65,11 @@ const routes = [
         handler: readAllPegawai,
     },
     {
+        method:'GET',
+        path: '/readPegawaiByID/{id}',
+        handler: getPegawaiByIdhandler,
+    },
+    {
         method: 'PUT',
         path: '/updatePegawai/{id}',
         handler: updatePegawaiHandler,
@@ -100,11 +105,6 @@ const routes = [
         options: {
             auth: 'session'
         }
-    },
-    {
-        method:'GET',
-        path: '/readPegawaiByID/{id}',
-        handler: getPegawaiByIdhandler,
     }
      
 ];
