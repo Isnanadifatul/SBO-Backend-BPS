@@ -1,8 +1,4 @@
-
-const { options } = require('joi');
 const { path } = require('@hapi/joi/lib/errors');
-const {createPegawai, readAllPegawai, getPegawaiByIdhandler, updatePegawaiHandler, deletePegawaiHandler} = require('./handler-pegawai');
-const {createAuthentication, loginHandler, logoutHandler, updateAuthenticationHandler} = require('./handler-auth');
 const { createHandler, readAllindikator_people, updateIndikatorHandler, deleteIndikatorHandler, getUserById} = require('./handler_indikator_people');
 const { getUserByIdPerilaku ,createIndikatorPerilakuHandler, readAllIndikatorPerilaku, updateIndikatorPerilakuHandler, deleteIndikatorPerilakuHandler} = require('./handler_indikator_perilaku');
 const { createIndikatorLeadHandler, readAllIndikatorLead, updateIndikatorLeadHandler, deleteIndikatorLeadHandler, getUserByIdLead} = require('./handler_indikator_lead');
@@ -14,6 +10,9 @@ const { getUserByIdPertanyaanLead, createPertanyaanLeadHandler, readAllPertanyaa
 const { getUserByIdPertanyaanSys, createPertanyaanSysHandler, readAllPertanyaanSys, updatePertanyaanSysHandler, deletePertanyaanSysHandler} = require('./handler_pertanyaan_system');
 const { getUserByIdPertanyaanPeople, createPertanyaanPeopleHandler, readAllPertanyaanPeople, updatePertanyaanPeopleHandler, deletePertanyaanPeopleHandler} = require('./handler_pertanyaan_people');
 const { getUserByIdPertanyaanPerilaku, createPertanyaanPerilakuHandler, readAllPertanyaanPerilaku, updatePertanyaanPerilakuHandler, deletePertanyaanPerilakuHandler} = require('./handler_pertanyaan_perilaku');
+const { path } = require('@hapi/joi/lib/errors');
+const {createPegawai, readAllPegawai, getPegawaiByIdhandler, updatePegawaiHandler, deletePegawaiHandler} = require('./handler-pegawai');
+const {createAuthentication, loginHandler, logoutHandler, updateAuthenticationHandler} = require('./handler-auth');
 
 const routes = [
     //Pertanyaan People
@@ -280,7 +279,34 @@ const routes = [
         path: '/indikator_system_delete/{id}',
         handler: deleteIndikatorSystemHandler
     },
-    //pegawai
+
+    //Konsep Dasar Hukum
+    {
+        method: 'POST',
+        path: '/dasar_hukum_post',
+        handler: createDhHandler,
+    },
+    {
+        method: 'GET',
+        path: '/dasar_hukum_search/{id}',
+        handler: getUserByIdKonsepDh
+    },
+    {
+        method: 'GET',
+        path: '/dasar_hukum_get',
+        handler: readAllDh
+    },
+    {
+        method: 'PUT',
+        path: '/dasar_hukum_update/{id}',
+        handler: updateDhHandler
+    },
+    {
+        method: 'DELETE',
+        path: '/dasar_hukum_delete/{id}',
+        handler: deleteDhHandler
+    },
+     //pegawai
      {
         method: 'POST',
         path: '/createPegawai',
@@ -342,9 +368,7 @@ const routes = [
             return h.response({ message: 'You have accessed a protected route' });
           }
         }
-      }
-    
-     
+    } 
 ];
 
 module.exports = routes;
