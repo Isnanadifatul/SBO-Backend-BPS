@@ -31,7 +31,20 @@ async function readAllindikator_people() {
       throw error; // Melemparkan kesalahan
   }
 }
-
+//Handler get data by id
+const getUserById = async (request, h) => {
+  const userId = request.params.id;
+  try {
+    const user = await indikator_people.findByPk(userId);
+    if (user) {
+      return h.response(user.toJSON()).code(200);
+    } else {
+      return h.response({ message: 'User not found' }).code(404);
+    }
+  } catch (error) {
+    return h.response({ message: 'Error fetching user', error: error.message }).code(500);
+  }
+};
 // Handler untuk mengupdate data berdasarkan ID
 const updateIndikatorHandler = async (request, h) => {
     try {
@@ -56,6 +69,8 @@ const updateIndikatorHandler = async (request, h) => {
   
   // Handler untuk menghapus data berdasarkan ID
 
+  
+
   const deleteIndikatorHandler = async (request, h) => {
     try {
       const { id } = request.params; // Asumsi ID pegawai datang dari parameter URL
@@ -73,7 +88,8 @@ const updateIndikatorHandler = async (request, h) => {
       console.error('Error menghapus data pegawai:', error);
       return h.response(`Error menghapus data pegawai: ${error.message}`).code(500);
     }
-  };
+  }
+  ;
 
 
-module.exports = {createHandler, readAllindikator_people, updateIndikatorHandler, deleteIndikatorHandler};
+module.exports = {createHandler, readAllindikator_people, updateIndikatorHandler,getUserById, deleteIndikatorHandler};
