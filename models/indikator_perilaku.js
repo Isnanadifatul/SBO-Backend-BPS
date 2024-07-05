@@ -9,7 +9,7 @@ const indikator_perilaku = dbConnection.define('indikator_perilaku', {
     id:{
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoiIcrement: true
+        autoIncrement: true
     },
     no:{
         type: DataTypes.INTEGER
