@@ -92,4 +92,4 @@ const updateIndikatorHandler = async (request, h) => {
   ;
 
 
-module.exports = {createHandler, readAllindikator_people, updateIndikatorHandler,getUserById, deleteIndikatorHandler};
+module.exports = {createHandler, readAllindikator_people, updateIndikatorHandler, deleteIndikatorHandler};

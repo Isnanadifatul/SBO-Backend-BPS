@@ -1,18 +1,12 @@
+
 const { path } = require('@hapi/joi/lib/errors');
-const { createHandler, readAllindikator_people, updateIndikatorHandler, deleteIndikatorHandler, getUserById} = require('./handler_indikator_people');
-const { getUserByIdPerilaku ,createIndikatorPerilakuHandler, readAllIndikatorPerilaku, updateIndikatorPerilakuHandler, deleteIndikatorPerilakuHandler} = require('./handler_indikator_perilaku');
-const { createIndikatorLeadHandler, readAllIndikatorLead, updateIndikatorLeadHandler, deleteIndikatorLeadHandler, getUserByIdLead} = require('./handler_indikator_lead');
-const { getUserByIdSystem, createIndikatorSystemHandler, readAllIndikatorSystem, updateIndikatorSystemHandler, deleteIndikatorSystemHandler} = require('./handler_indikator_system');
-const { getUserByIdKonsepDh, createDhHandler, readAllDh, updateDhHandler, deleteDhHandler} = require('./handler_dasar_hukum');
-const { getUserByIdMi, createMiHandler, readAllMiHandler, updateMiHandler, deleteMiHandler} = require('./handler_model_implementasi');
-const { getUserByIdNi, createNiHandler, readAllNiHandler, updateNiHandler, deleteNiHandler} = require('./handler_nilai_inti');
-const { getUserByIdPertanyaanLead, createPertanyaanLeadHandler, readAllPertanyaanLead, updatePertanyaanLeadHandler, deletePertanyaanLeadHandler} = require('./handler_pertanyaan_lead');
-const { getUserByIdPertanyaanSys, createPertanyaanSysHandler, readAllPertanyaanSys, updatePertanyaanSysHandler, deletePertanyaanSysHandler} = require('./handler_pertanyaan_system');
-const { getUserByIdPertanyaanPeople, createPertanyaanPeopleHandler, readAllPertanyaanPeople, updatePertanyaanPeopleHandler, deletePertanyaanPeopleHandler} = require('./handler_pertanyaan_people');
-const { getUserByIdPertanyaanPerilaku, createPertanyaanPerilakuHandler, readAllPertanyaanPerilaku, updatePertanyaanPerilakuHandler, deletePertanyaanPerilakuHandler} = require('./handler_pertanyaan_perilaku');
-const { createPegawai, readAllPegawai, getPegawaiByIdhandler, updatePegawaiHandler, deletePegawaiHandler} = require('./handler-pegawai');
-const { createAuthentication, loginHandler, logoutHandler, updateAuthenticationHandler} = require('./handler-auth');
-const { isiSurveyHandler } = require('./handler_survey_budaya');
+const { createHandler, readAllindikator_people, updateIndikatorHandler, deleteIndikatorHandler} = require('./handler_indikator_people');
+/*
+const { createIndikatorPerilakuHandler, readIndikatorPerilakuHandler, updateIndikatorPerilakuHandler, deleteIndikatorPerilakuHandler} = require('./handler_indikator_perilaku');
+*/
+const {createPegawai, readAllPegawai, getPegawaiByIdhandler, updatePegawaiHandler, deletePegawaiHandler} = require('./handler-pegawai');
+const {createAuthentication, loginHandler, logoutHandler, updateAuthenticationHandler} = require('./handler-auth');
+const { options } = require('joi');
 
 const routes = [
     //Pertanyaan People
@@ -368,12 +362,9 @@ const routes = [
             return h.response({ message: 'You have accessed a protected route' });
           }
         }
-    }, 
-    {
-        method: 'POST',
-        path: '/isi-survey',
-        handler: isiSurveyHandler
-    }
+      }
+    
+     
 ];
 
 module.exports = routes;
