@@ -36,6 +36,7 @@ const Pegawai = dbConnection.define('Pegawai', {
   },
 }, 
 {
+  tableName: "pegawai",
   freezeTableName: true,
   timestamps: false
 });
