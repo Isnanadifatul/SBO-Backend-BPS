@@ -14,6 +14,10 @@ const pertanyaan_perilaku = dbConnection.define('pertanyaan_perilaku', {
     nomor:{
         type: DataTypes.INTEGER
      },
+     label:{
+      type: DataTypes.STRING,
+      unique: false,
+     },
     pertanyaan:{
         type: DataTypes.STRING
      }

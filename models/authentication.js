@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const connection = require('../db-config/connect');
-const { DataTypes } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 const mysql = require('mysql2/promise');
 
 const dbConnection = connection.connect;
@@ -35,6 +35,15 @@ const Authentication = dbConnection.define('Authentication', {
   freezeTableName: true,
   timestamps: false
 });
+
+// Sinkronisasi Model dengan Database
+dbConnection.sync({ alter: true })
+  .then(() => {
+    console.log('Database & tables created!');
+  })
+  .catch((error) => {
+    console.error('Unable to create table : ', error);
+  });
 
 // Insert Authentication
 const insertUser = async (role, hashedPassword, confirmasi_password, nip) => {

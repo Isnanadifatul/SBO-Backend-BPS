@@ -108,7 +108,7 @@ const loginHandler = async (request, h) => {
         role: user.role // Include any additional data you want in the token payload
       },
       process.env.JWT_SECRET, // Secret key for signing the token, should be stored securely
-      { expiresIn: '1h' } // Token expiry time
+      { expiresIn: '24h' } // Token expiry time
     );
 
     //Mengambil date pegawai yang berelasi

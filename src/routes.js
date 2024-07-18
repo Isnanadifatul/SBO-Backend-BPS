@@ -13,6 +13,9 @@ const { getUserByIdPertanyaanPerilaku, createPertanyaanPerilakuHandler, readAllP
 // const { path } = require('@hapi/joi/lib/errors');
 const {createPegawai, readAllPegawai, getPegawaiByIdhandler, updatePegawaiHandler, deletePegawaiHandler} = require('./handler-pegawai');
 const {createAuthentication, loginHandler, logoutHandler, updateAuthenticationHandler} = require('./handler-auth');
+//isi survey SBO
+const {isiSurveyHandler, getAverageScoresHandler, getSurveyPriker, getSurveyDataByYearAndQuarter} = require('./handler_survey_sbo');
+const { options } = require('joi');
 
 const routes = [
     //Pertanyaan People
@@ -404,7 +407,41 @@ const routes = [
             return h.response({ message: 'You have accessed a protected route' });
           }
         }
-    } 
+    },
+    {
+        method: 'POST',
+        path: '/isiSurvey',
+        handler: isiSurveyHandler,
+        options: {
+            auth: false
+        }
+    },
+    //survey SBO
+    {
+        method: 'GET',
+        path: '/survey-priker',
+        handler: getSurveyPriker,
+
+    },
+    {
+        method: 'GET',
+        path: '/survey-data/{tahun}/{triwulan}',
+        handler: getSurveyDataByYearAndQuarter,
+    },
+    {
+        method: 'GET',
+        path: '/survey/average/{label}',
+        handler: getAverageScoresHandler,
+        options: {
+            auth: false
+        }
+    },
+    {
+        method: 'GET',
+        path: '/average-scores/{label}',
+        handler: getAverageScoresHandler,
+      },
+
 ];
 
 module.exports = routes;

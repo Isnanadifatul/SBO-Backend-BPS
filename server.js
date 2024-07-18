@@ -16,7 +16,7 @@ const init = async () => {
         port: 5000,
         routes: {
             cors: {
-                origin: ['http://127.0.0.1:5500/'],
+                origin: ['*'],
                 credentials: true
             }
         },
