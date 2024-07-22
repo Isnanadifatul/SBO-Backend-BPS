@@ -1,8 +1,8 @@
 const {survey_budaya_organisasi} = require('../models/survey_budaya_organisasi');
-const {hasil_survey_priker} = require('../models/hasil_survey_sbo');
+const {hasil_survey_priker, hasil_survey_leadbo, hasil_survey_pebo, hasil_survey_sysbo} = require('../models/hasil_survey_sbo');
 const {pertanyaan_perilaku} = require('../models/pertanyaan_perilaku');
 
-const { Op } = require('sequelize');
+const { Op, Model, where } = require('sequelize');
 
 const isiSurveyHandler = async (request, h) => {
     const { nama, jenis_kelamin, umur, pendidikan, masa_kerja, score_harapan, score_kinerja, label } = request.payload;
@@ -36,22 +36,127 @@ const isiSurveyHandler = async (request, h) => {
     }
 };
 
+// Calculate triwulan value
+const calculateTriwulan = async (Model, year, maxTriwulan) => {
+  const count = await Model.count({
+      where: { tahun: year }
+  });
+  const triwulan = Math.floor(count / maxTriwulan) + 1;
+  if (triwulan > maxTriwulan) {
+      throw new Error(`Triwulan tidak boleh lebih dari ${maxTriwulan} dalam satu tahun`);
+  }
+  return triwulan;
+};
+
+/*
+//Calculate ID Pertanyaan
+const calculateIDPertanyaan = async (Model, year, maxIDPertanyaan) =>
+  const count = await Model.count({
+    where: { tahun: year}
+  })
+  const IDertanyaan
+*/
+
+// Function to calculate average scores
+const calculateAverageScores = async (label) => {
+  const responses = await survey_budaya_organisasi.findAll({
+      where: {
+          label: {
+              [Op.like]: `${label}%`,
+          },
+      },
+      attributes: ['score_harapan', 'score_kinerja'],
+  });
+
+  let totalHarapan = [];
+  let totalKinerja = [];
+  let count = 0;
+
+  responses.forEach((response) => {
+      const harapanArray = JSON.parse(response.score_harapan);
+      const kinerjaArray = JSON.parse(response.score_kinerja);
+      harapanArray.forEach((score, index) => {
+          totalHarapan[index] = (totalHarapan[index] || 0) + score;
+      });
+      kinerjaArray.forEach((score, index) => {
+          totalKinerja[index] = (totalKinerja[index] || 0) + score;
+      });
+      count++;
+  });
+
+  const avgScoresHarapan = totalHarapan.map((total) => (total / count).toFixed(2));
+  const avgScoresKinerja = totalKinerja.map((total) => (total / count).toFixed(2));
+
+  return { label, avgScoresHarapan, avgScoresKinerja };
+};
+
+// Handler function for the route
+const getAverageScoresHandler = async (request, h) => {
+  const label = request.params.label;
+  try {
+      const { avgScoresHarapan, avgScoresKinerja } = await calculateAverageScores(label);
+      let Model;
+      let labelPrefix;
+      let year = new Date().getFullYear().toString();
+      let maxTriwulan;
+
+      switch (label) {
+          case 'PriKer':
+              Model = hasil_survey_priker;
+              labelPrefix = 'priker';
+              maxTriwulan = 8;
+              break;
+          case 'PeBO':
+              Model = hasil_survey_pebo;
+              labelPrefix = 'pebo';
+              maxTriwulan = 8;
+              break;
+          case 'LeadBO':
+              Model = hasil_survey_leadbo;
+              labelPrefix = 'leadbo';
+              maxTriwulan = 8;
+              break;
+          case 'SysBO':
+              Model = hasil_survey_sysbo;
+              labelPrefix = 'sysbo';
+              maxTriwulan = 8;
+              break;
+          default:
+              throw new Error('Invalid label');
+      }
+
+      const triwulan = await calculateTriwulan(Model, year, maxTriwulan);
+
+      for (let i = 0; i < avgScoresHarapan.length; i++) {
+          await Model.create({
+              x: avgScoresKinerja[i],
+              y: avgScoresHarapan[i],
+              tahun: year,
+              triwulan: triwulan,
+          });
+      }
+
+      return h.response({ label, avgScoresHarapan, avgScoresKinerja }).code(200);
+  } catch (error) {
+      return h.response({ error: error.message }).code(500);
+  }
+};
 
 //read all
 const getSurveyPriker = async (request, h) => {
-    try {
-      const surveys = await hasil_survey_priker.findAll();
-      return h.response(surveys).code(200);
-    } catch (error) {
-      console.error(error);
-      return h.response('Error fetching data').code(500);
-    }
-  };
+  try {
+    const surveys = await hasil_survey_priker.findAll();
+    return h.response(surveys).code(200);
+  } catch (error) {
+    console.error(error);
+    return h.response('Error fetching data').code(500);
+  }
+};
 
+// Definisi asosiasi
+hasil_survey_priker.belongsTo(pertanyaan_perilaku, { foreignKey: 'id_pertanyaan', targetKey: 'id_pertanyaan' });
 
-  //definisi asosiasi
-  hasil_survey_priker.belongsTo(pertanyaan_perilaku, { foreignKey: 'id_hasil_priker', targetKey: 'id_pertanyaan' });
-
+//Menampilkan hasil survey pada Diagram Kartesius
 const getSurveyDataByYearAndQuarter = async (request, h) => {
   const { tahun, triwulan } = request.params;
   try {
@@ -61,7 +166,8 @@ const getSurveyDataByYearAndQuarter = async (request, h) => {
         model: pertanyaan_perilaku,
         required: true,
         attributes: ['label'],
-      }]
+      }],
+      logging: console.log
     });
 
     const formattedResponse = {
@@ -81,173 +187,4 @@ const getSurveyDataByYearAndQuarter = async (request, h) => {
   }
 };
 
-
-
-/*
-const calculateAverageScores = async (label) => {
-  try {
-      const surveyResponses = await survey_budaya_organisasi.findAll({
-          where: { label: { [Op.like]: `${label}%` } },
-          attributes: ['score_harapan', 'score_kinerja'],
-      });
-
-      if (!surveyResponses.length) {
-          throw new Error(`No survey responses found for label: ${label}`);
-      }
-
-      const scoresHarapan = [];
-      const scoresKinerja = [];
-
-      surveyResponses.forEach((response) => {
-          const scoreHarapanArray = JSON.parse(response.score_harapan);
-          const scoreKinerjaArray = JSON.parse(response.score_kinerja);
-
-          if (!Array.isArray(scoreHarapanArray) || !Array.isArray(scoreKinerjaArray)) {
-              throw new Error('score_harapan or score_kinerja is not an array');
-          }
-
-          scoreHarapanArray.forEach((score, index) => {
-              if (!scoresHarapan[index]) {
-                  scoresHarapan[index] = [];
-              }
-              scoresHarapan[index].push(score);
-          });
-          scoreKinerjaArray.forEach((score, index) => {
-              if (!scoresKinerja[index]) {
-                  scoresKinerja[index] = [];
-              }
-              scoresKinerja[index].push(score);
-          });
-      });
-
-      const avgScoresHarapan = scoresHarapan.map(scores => {
-          const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-          return Math.round(avg * 100) / 100; // Membulatkan ke dua angka di belakang koma
-      });
-      const avgScoresKinerja = scoresKinerja.map(scores => {
-          const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-          return Math.round(avg * 100) / 100; // Membulatkan ke dua angka di belakang koma
-      });
-
-      return {
-          label,
-          avgScoresHarapan,
-          avgScoresKinerja
-      };
-  } catch (error) {
-      console.error('Error calculating average scores:', error);
-      throw error;
-  }
-};
-*/
-const getAverageScoresHandler = async (request, h) => {
-  const { label } = request.params;
-  try {
-      const averageScores = await calculateAverageScores(label);
-      return h.response(averageScores).code(200);
-  } catch (error) {
-      return h.response({ error: error.message }).code(500);
-  }
-};
-
-//menyimpan rata-rata
-const saveAverageScores = async (label, avgScoresHarapan, avgScoresKinerja) => {
-  const currentYear = new Date().getFullYear();
-  const surveyInterval = 3; // interval survey in months
-  const totalSurveysPerYear = 12 / surveyInterval;
-  const getTriwulan = () => {
-    const currentMonth = new Date().getMonth() + 1;
-    return Math.ceil(currentMonth / surveyInterval);
-  };
-
-  const triwulan = getTriwulan();
-  let model;
-
-  switch (label) {
-    case 'PriKer':
-      model = hasil_survey_priker;
-      break;
-    case 'PeBO':
-      model = hasil_survey_pebo;
-      break;
-    case 'LeadBO':
-      model = hasil_survey_leadbo;
-      break;
-    case 'SysBO':
-      model = hasil_survey_sysbo;
-      break;
-    default:
-      throw new Error(`Unknown label: ${label}`);
-  }
-
-  const records = avgScoresHarapan.map((avgHarapan, index) => ({
-    x: avgScoresKinerja[index].toFixed(2),
-    y: avgHarapan.toFixed(2),
-    tahun: currentYear.toString(),
-    triwulan: triwulan.toString(),
-  }));
-
-  await model.bulkCreate(records);
-};
-
-//menghitung rat-rata
-const calculateAverageScores = async (label) => {
-  try {
-    const surveyResponses = await survey_budaya_organisasi.findAll({
-      where: { label: { [Op.like]: `${label}%` } },
-      attributes: ['score_harapan', 'score_kinerja'],
-    });
-
-    if (!surveyResponses.length) {
-      throw new Error(`No survey responses found for label: ${label}`);
-    }
-
-    const scoresHarapan = [];
-    const scoresKinerja = [];
-
-    surveyResponses.forEach((response) => {
-      const scoreHarapanArray = JSON.parse(response.score_harapan);
-      const scoreKinerjaArray = JSON.parse(response.score_kinerja);
-
-      if (!Array.isArray(scoreHarapanArray) || !Array.isArray(scoreKinerjaArray)) {
-        throw new Error('score_harapan or score_kinerja is not an array');
-      }
-
-      scoreHarapanArray.forEach((score, index) => {
-        if (!scoresHarapan[index]) {
-          scoresHarapan[index] = [];
-        }
-        scoresHarapan[index].push(score);
-      });
-      scoreKinerjaArray.forEach((score, index) => {
-        if (!scoresKinerja[index]) {
-          scoresKinerja[index] = [];
-        }
-        scoresKinerja[index].push(score);
-      });
-    });
-
-    const avgScoresHarapan = scoresHarapan.map(scores => {
-      const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-      return Math.round(avg * 100) / 100; // Membulatkan ke dua angka di belakang koma
-    });
-    const avgScoresKinerja = scoresKinerja.map(scores => {
-      const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-      return Math.round(avg * 100) / 100; // Membulatkan ke dua angka di belakang koma
-    });
-
-    await saveAverageScores(label, avgScoresHarapan, avgScoresKinerja);
-
-    return {
-      label,
-      avgScoresHarapan,
-      avgScoresKinerja
-    };
-  } catch (error) {
-    console.error('Error calculating average scores:', error);
-    throw error;
-  }
-};
-
-
-module.exports = { isiSurveyHandler, getAverageScoresHandler, getSurveyPriker, getSurveyDataByYearAndQuarter };
+module.exports = { isiSurveyHandler, getAverageScoresHandler, getSurveyPriker, getSurveyDataByYearAndQuarter, getAverageScoresHandler, calculateAverageScores };

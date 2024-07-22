@@ -11,6 +11,13 @@ const hasil_survey_priker = dbConnection.define('hasil_survey_priker', {
     primaryKey: true,
     autoIncrement: true,
   },
+  id_pertanyaan: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'pertanyaan_perilaku',
+      key: 'id_pertanyaan',
+    },
+  },
   x: {
     type: DataTypes.STRING,
   },
@@ -54,7 +61,6 @@ const hasil_survey_leadbo = dbConnection.define('hasil_survey_leadbo', {
   freezeTableName: true,
   timestamps: false
 });
-
 
 const hasil_survey_pebo = dbConnection.define('hasil_survey_pebo', {
   id_hasil_pebo: {

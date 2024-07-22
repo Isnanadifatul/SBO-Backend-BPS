@@ -438,7 +438,7 @@ const routes = [
     },
     {
         method: 'GET',
-        path: '/average-scores/{label}',
+        path: '/average-scores',
         handler: getAverageScoresHandler,
       },
 
