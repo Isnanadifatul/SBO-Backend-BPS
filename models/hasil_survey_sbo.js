@@ -25,10 +25,10 @@ const hasil_survey_priker = dbConnection.define('hasil_survey_priker', {
     type: DataTypes.STRING,
   },
   tahun: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
   },
   triwulan: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
   },
 }, 
 {
@@ -43,6 +43,13 @@ const hasil_survey_leadbo = dbConnection.define('hasil_survey_leadbo', {
     primaryKey: true,
     autoIncrement: true,
   },
+  id_pertanyaan : {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'pertanyaan_leadership',
+      key: 'id_pertanyaan'
+    }
+  },
   x: {
     type: DataTypes.STRING,
   },
@@ -50,10 +57,10 @@ const hasil_survey_leadbo = dbConnection.define('hasil_survey_leadbo', {
     type: DataTypes.STRING,
   },
   tahun: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
   },
   triwulan: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
   },
 }, 
 {
@@ -68,6 +75,13 @@ const hasil_survey_pebo = dbConnection.define('hasil_survey_pebo', {
     primaryKey: true,
     autoIncrement: true,
   },
+  id_pertanyaan: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'pertanyaan_people',
+      key: 'id_pertanyaan'
+    }
+  },
   x: {
     type: DataTypes.STRING,
   },
@@ -75,10 +89,10 @@ const hasil_survey_pebo = dbConnection.define('hasil_survey_pebo', {
     type: DataTypes.STRING,
   },
   tahun: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
   },
   triwulan: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
   },
 }, 
 {
@@ -93,6 +107,13 @@ const hasil_survey_sysbo = dbConnection.define('hasil_survey_sysbo', {
     primaryKey: true,
     autoIncrement: true,
   },
+  id_pertanyaan: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'pertanyaan_system',
+      key: 'id_pertanyaan'
+    } 
+  },
   x: {
     type: DataTypes.STRING,
   },
@@ -100,10 +121,10 @@ const hasil_survey_sysbo = dbConnection.define('hasil_survey_sysbo', {
     type: DataTypes.STRING,
   },
   tahun: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
   },
   triwulan: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
   },
 }, 
 {

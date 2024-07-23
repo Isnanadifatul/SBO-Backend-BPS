@@ -5,8 +5,9 @@ const {pertanyaan_perilaku} = require('../models/pertanyaan_perilaku');
 const { Op, Model, where } = require('sequelize');
 
 const isiSurveyHandler = async (request, h) => {
-    const { nama, jenis_kelamin, umur, pendidikan, masa_kerja, score_harapan, score_kinerja, label } = request.payload;
-
+    const {triwulan, nama, jenis_kelamin, umur, pendidikan, masa_kerja, score_harapan, score_kinerja, label} = request.payload;
+    const tahun = new Date().getFullYear();
+    
     try {
 
        // Cek apakah label sudah ada
@@ -14,6 +15,7 @@ const isiSurveyHandler = async (request, h) => {
        const existingEntry = await survey_budaya_organisasi.findOne({
            where: { label: uniqueLabel }
        });
+       
 
        if (existingEntry) {
            uniqueLabel = `${label}-${Date.now()}`;
@@ -21,6 +23,8 @@ const isiSurveyHandler = async (request, h) => {
       
         const newSurveyResponse = await survey_budaya_organisasi.create({
             label: uniqueLabel,
+            triwulan,
+            tahun,
             nama,
             jenis_kelamin,
             umur,
@@ -99,27 +103,32 @@ const getAverageScoresHandler = async (request, h) => {
       let labelPrefix;
       let year = new Date().getFullYear().toString();
       let maxTriwulan;
+      let numQuestions;
 
       switch (label) {
           case 'PriKer':
               Model = hasil_survey_priker;
               labelPrefix = 'priker';
               maxTriwulan = 8;
+              numQuestions = 7;
               break;
           case 'PeBO':
               Model = hasil_survey_pebo;
               labelPrefix = 'pebo';
               maxTriwulan = 8;
+              numQuestions = 21;
               break;
           case 'LeadBO':
               Model = hasil_survey_leadbo;
               labelPrefix = 'leadbo';
               maxTriwulan = 8;
+              numQuestions = 8;
               break;
           case 'SysBO':
               Model = hasil_survey_sysbo;
               labelPrefix = 'sysbo';
               maxTriwulan = 8;
+              numQuestions = 11;
               break;
           default:
               throw new Error('Invalid label');
@@ -133,6 +142,7 @@ const getAverageScoresHandler = async (request, h) => {
               y: avgScoresHarapan[i],
               tahun: year,
               triwulan: triwulan,
+              id_pertanyaan: i < numQuestions ? i + 1 : null
           });
       }
 
@@ -186,5 +196,7 @@ const getSurveyDataByYearAndQuarter = async (request, h) => {
     return h.response({ error: 'Internal server error' }).code(500);
   }
 };
+
+
 
 module.exports = { isiSurveyHandler, getAverageScoresHandler, getSurveyPriker, getSurveyDataByYearAndQuarter, getAverageScoresHandler, calculateAverageScores };

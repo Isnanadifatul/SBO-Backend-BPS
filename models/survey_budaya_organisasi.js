@@ -15,6 +15,12 @@ const survey_budaya_organisasi = dbConnection.define('survey_budaya_organisasi',
     type:DataTypes.STRING,
     unique: false,
   },
+  triwulan: {
+    type: DataTypes.INTEGER,
+  },
+  tahun: {
+    type: DataTypes.INTEGER,
+  },
   nama: {
     type: DataTypes.STRING,
   },
@@ -35,6 +41,12 @@ const survey_budaya_organisasi = dbConnection.define('survey_budaya_organisasi',
   },
   score_kinerja: {
     type: DataTypes.JSON,
+  },
+  triwulan: {
+    type: DataTypes.INTEGER,
+  },
+  tahun: {
+    type: DataTypes.INTEGER,
   }
   
 }, 
