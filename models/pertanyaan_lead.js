@@ -13,10 +13,13 @@ const pertanyaan_lead = dbConnection.define('pertanyaan_lead', {
     },
     nomor:{
         type: DataTypes.INTEGER
-     },
+    },
+    label: {
+    type: DataTypes.STRING,
+    },
     pertanyaan_leadership:{
-        type: DataTypes.STRING
-     }
+    type: DataTypes.STRING
+    }
 },
 
 {

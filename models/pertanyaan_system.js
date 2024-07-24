@@ -13,10 +13,13 @@ const pertanyaan_sys = dbConnection.define('pertanyaan_sys', {
     },
     nomor:{
         type: DataTypes.INTEGER
-     },
+    },
     pertanyaan_system:{
         type: DataTypes.STRING
-     }
+    },
+    label: {
+    type: DataTypes.STRING,
+  },
 },
 
 {

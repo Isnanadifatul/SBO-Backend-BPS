@@ -17,11 +17,10 @@ const {createPegawai, readAllPegawai, getPegawaiByIdhandler, updatePegawaiHandle
 //Login
 const {createAuthentication, loginHandler, logoutHandler, updateAuthenticationHandler} = require('./handler-auth');
 //isi survey SBO
-const {isiSurveyHandler, getAverageScoresHandler, getSurveyPriker, getSurveyDataByYearAndQuarter} = require('./handler_survey_sbo');
+const {isiSurveyHandler, getAverageScoresHandler} = require('./handler_survey_sbo');
 //isi survey pegawai teladan
 const { insertSurveyHandler, totalSurveyHandler, getSurveyKandidat1, getSurveyKandidat2, getSurveyKandidat3,
-        AVGSurveyPerKandidat, AVGConvert30, handleSaveResponse
-        } = require('./handler_karyawan_teladan');
+        AVGConvert30} = require('./handler_karyawan_teladan');
 const { getNilaiById, insertNilaiTambah, readNilai, updateNilai, deleteNilai} = require('./nilai_tambah_handler');
 const {getCombinedScores} = require('./handler_result');
 
@@ -31,69 +30,100 @@ const routes = [
     {
         method: 'GET',
         path: '/result',
-        handler: getCombinedScores
+        handler: getCombinedScores,
+        options: {
+            auth: false
+        }
     },
      //Nilai tambah
     {
         method: 'POST',
         path: '/nilai_tambah_insert',
-        handler: insertNilaiTambah
+        handler: insertNilaiTambah,
+        options: {
+            auth: false
+        }
     },
     {
         method: 'GET',
         path: '/nilai_tambah_get',
-        handler: readNilai
+        handler: readNilai,
+        options: {
+            auth: false
+        }
     },
     {
         method: 'GET',
         path: '/nilai_tambah_getby/{id}',
-        handler: getNilaiById
+        handler: getNilaiById,
+         options: {
+            auth: false
+        }
      },
     {
         method: 'PUT',
         path: '/nilai_tambah_update/{id}',
-        handler: updateNilai
+        handler: updateNilai,
+        options: {
+            auth: false
+        }
     },
     {
         method: 'DELETE',
         path: '/nilai_tambah_delete/{id}',
-        handler: deleteNilai
+        handler: deleteNilai,
+        options: {
+            auth: false
+        }
     },
     //Survey Karyawan Teladan
     {
         method: 'POST',
         path: '/survey_karyawan_teladan',
-        handler:  insertSurveyHandler  
-    },
-    {
-        method: 'GET',
-        path: '/AVG',
-        handler:  AVGSurveyPerKandidat  
+        handler:  insertSurveyHandler ,
+        options: {
+            auth: false
+        }
     },
     {
         method: 'GET',
         path: '/AVG30',
-        handler:  AVGConvert30  
+        handler:  AVGConvert30 ,
+        options: {
+            auth: false
+        }
     },
     {
         method: 'GET',
         path: '/total_survey_kandidat',
-        handler: totalSurveyHandler
+        handler: totalSurveyHandler,
+        options: {
+            auth: false
+        }
     },
     {
         method: 'GET',
         path: '/survey_kandidat1',
-        handler: getSurveyKandidat1
+        handler: getSurveyKandidat1,
+        options: {
+            auth: false
+        }
     },
     {
         method: 'GET',
         path: '/survey_kandidat2',
-        handler: getSurveyKandidat2
+        handler: getSurveyKandidat2,
+        options: {
+            auth: false
+        }
     },
     {
         method: 'GET',
         path: '/survey_kandidat3',
-        handler: getSurveyKandidat3
+        handler: getSurveyKandidat3,
+        options: {
+            auth: false
+        }
     },
     //Pertanyaan People
     {
@@ -494,17 +524,6 @@ const routes = [
         }
     },
     //survey SBO
-    {
-        method: 'GET',
-        path: '/survey-priker',
-        handler: getSurveyPriker,
-
-    },
-    {
-        method: 'GET',
-        path: '/survey-data/{tahun}/{triwulan}',
-        handler: getSurveyDataByYearAndQuarter,
-    },
     {
         method: 'GET',
         path: '/survey/average/{label}',

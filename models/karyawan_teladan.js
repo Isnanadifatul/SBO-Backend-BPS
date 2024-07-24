@@ -151,7 +151,7 @@ const saveKonversi = async (nama_kandidat, nilai_konversi) => {
         pertanyaan_16, pertanyaan_17, pertanyaan_18, pertanyaan_19, pertanyaan_20,
         pertanyaan_21) => {
     try {
-      const newUser = await survey_karTeladan.create({nama_lengkap, jenis_kelamin, umur, pendidikan, masa_kerja, nama_kandidat,
+      const newUser = await survey_pegawai_teladan.create({nama_lengkap, jenis_kelamin, umur, pendidikan, masa_kerja, nama_kandidat,
         pertanyaan_1, pertanyaan_2, pertanyaan_3, pertanyaan_4, pertanyaan_5, 
         pertanyaan_6, pertanyaan_7, pertanyaan_8, pertanyaan_9, pertanyaan_10,
         pertanyaan_11, pertanyaan_12, pertanyaan_13, pertanyaan_14, pertanyaan_15,

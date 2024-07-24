@@ -13,7 +13,10 @@ const pertanyaan_peop = dbConnection.define('pertanyaan_people', {
     },
     nomor:{
         type: DataTypes.INTEGER
-     },
+    },
+    label: {
+        type: DataTypes.STRING,
+    },
     pertanyaan_people:{
         type: DataTypes.STRING
      }

@@ -73,34 +73,6 @@ async function insertSurveyHandler(request, h) {
 }
 };
 
-//get rata rata skor
-const AVGSurveyPerKandidat = async (request, h) => {
-  try {
-      const results = await survey_pegawai_teladan.findAll({
-          attributes: [
-              'nama_kandidat',
-              [Sequelize.fn('AVG', Sequelize.literal(`
-                  (pertanyaan_1 + pertanyaan_2 + pertanyaan_3 + pertanyaan_4 + pertanyaan_5 + 
-                   pertanyaan_6 + pertanyaan_7 + pertanyaan_8 + pertanyaan_9 + pertanyaan_10 + 
-                   pertanyaan_11 + pertanyaan_12 + pertanyaan_13 + pertanyaan_14 + pertanyaan_15 + 
-                   pertanyaan_16 + pertanyaan_17 + pertanyaan_18 + pertanyaan_19 + pertanyaan_20 + 
-                   pertanyaan_21) / 21
-              `)), 'avg_total_hasil']
-          ],
-          group: ['nama_kandidat']
-      });
-
-      if (results.length === 0) {
-          return h.response({ error: 'Data not found' }).code(404);
-      }
-
-      return h.response(results).code(200);
-  } catch (err) {
-      console.error(err);
-      return h.response({ error: 'Failed to fetch data' }).code(500);
-  }
-};
-
 //Nilai rata rata dikali 30%
 const AVGConvert30 = async (request, h) => {
   try {
@@ -242,7 +214,6 @@ const getSurveyKandidat3 = async (request, h) => {
     getSurveyKandidat1,
     getSurveyKandidat2,
     getSurveyKandidat3,
-    AVGSurveyPerKandidat,
     AVGConvert30
     };
 

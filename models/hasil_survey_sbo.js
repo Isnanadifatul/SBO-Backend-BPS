@@ -1,8 +1,12 @@
 const connection = require('../db-config/connect');
 const {DataTypes} = require('sequelize');
 const mysql = require('mysql2/promise');
-
 const dbConnection = connection.connect;
+
+const { pertanyaan_perilaku } = require('./pertanyaan_perilaku');
+const { pertanyaan_lead } = require('./pertanyaan_lead');
+const { pertanyaan_peop } = require('./pertanyaan_people');
+const { pertanyaan_sys } = require('./pertanyaan_system');
 
 // create database using models
 const hasil_survey_priker = dbConnection.define('hasil_survey_priker', {
@@ -132,6 +136,11 @@ const hasil_survey_sysbo = dbConnection.define('hasil_survey_sysbo', {
   freezeTableName: true,
   timestamps: false
 });
+
+hasil_survey_priker.belongsTo(pertanyaan_perilaku, { foreignKey: 'id_pertanyaan' });
+hasil_survey_leadbo.belongsTo(pertanyaan_lead, { foreignKey: 'id_pertanyaan' });
+hasil_survey_pebo.belongsTo(pertanyaan_peop, { foreignKey: 'id_pertanyaan' });
+hasil_survey_sysbo.belongsTo(pertanyaan_sys, { foreignKey: 'id_pertanyaan' });
 
   
 module.exports = {hasil_survey_priker, hasil_survey_leadbo, hasil_survey_pebo, hasil_survey_sysbo};

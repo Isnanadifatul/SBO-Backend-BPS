@@ -11,7 +11,8 @@ const nilai_tambah = dbConnection.define('nilai_tambah', {
         autoIncrement: true
     },
     nama_kandidat:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false
     },
     // id_survey_p:{
     //     type: DataTypes.INTEGER,
