@@ -1,4 +1,5 @@
 const { path } = require('@hapi/joi/lib/errors');
+const { options } = require('joi');
 const { createHandler, readAllindikator_people, updateIndikatorHandler, deleteIndikatorHandler, getUserById} = require('./handler_indikator_people');
 const { getUserByIdPerilaku ,createIndikatorPerilakuHandler, readAllIndikatorPerilaku, updateIndikatorPerilakuHandler, deleteIndikatorPerilakuHandler} = require('./handler_indikator_perilaku');
 const { createIndikatorLeadHandler, readAllIndikatorLead, updateIndikatorLeadHandler, deleteIndikatorLeadHandler, getUserByIdLead} = require('./handler_indikator_lead');
@@ -11,13 +12,89 @@ const { getUserByIdPertanyaanSys, createPertanyaanSysHandler, readAllPertanyaanS
 const { getUserByIdPertanyaanPeople, createPertanyaanPeopleHandler, readAllPertanyaanPeople, updatePertanyaanPeopleHandler, deletePertanyaanPeopleHandler} = require('./handler_pertanyaan_people');
 const { getUserByIdPertanyaanPerilaku, createPertanyaanPerilakuHandler, readAllPertanyaanPerilaku, updatePertanyaanPerilakuHandler, deletePertanyaanPerilakuHandler} = require('./handler_pertanyaan_perilaku');
 // const { path } = require('@hapi/joi/lib/errors');
+//CRUD Pegawai
 const {createPegawai, readAllPegawai, getPegawaiByIdhandler, updatePegawaiHandler, deletePegawaiHandler} = require('./handler-pegawai');
+//Login
 const {createAuthentication, loginHandler, logoutHandler, updateAuthenticationHandler} = require('./handler-auth');
 //isi survey SBO
 const {isiSurveyHandler, getAverageScoresHandler, getSurveyPriker, getSurveyDataByYearAndQuarter} = require('./handler_survey_sbo');
-const { options } = require('joi');
+//isi survey pegawai teladan
+const { insertSurveyHandler, totalSurveyHandler, getSurveyKandidat1, getSurveyKandidat2, getSurveyKandidat3,
+        AVGSurveyPerKandidat, AVGConvert30, handleSaveResponse
+        } = require('./handler_karyawan_teladan');
+const { getNilaiById, insertNilaiTambah, readNilai, updateNilai, deleteNilai} = require('./nilai_tambah_handler');
+const {getCombinedScores} = require('./handler_result');
+
 
 const routes = [
+     //result
+    {
+        method: 'GET',
+        path: '/result',
+        handler: getCombinedScores
+    },
+     //Nilai tambah
+    {
+        method: 'POST',
+        path: '/nilai_tambah_insert',
+        handler: insertNilaiTambah
+    },
+    {
+        method: 'GET',
+        path: '/nilai_tambah_get',
+        handler: readNilai
+    },
+    {
+        method: 'GET',
+        path: '/nilai_tambah_getby/{id}',
+        handler: getNilaiById
+     },
+    {
+        method: 'PUT',
+        path: '/nilai_tambah_update/{id}',
+        handler: updateNilai
+    },
+    {
+        method: 'DELETE',
+        path: '/nilai_tambah_delete/{id}',
+        handler: deleteNilai
+    },
+    //Survey Karyawan Teladan
+    {
+        method: 'POST',
+        path: '/survey_karyawan_teladan',
+        handler:  insertSurveyHandler  
+    },
+    {
+        method: 'GET',
+        path: '/AVG',
+        handler:  AVGSurveyPerKandidat  
+    },
+    {
+        method: 'GET',
+        path: '/AVG30',
+        handler:  AVGConvert30  
+    },
+    {
+        method: 'GET',
+        path: '/total_survey_kandidat',
+        handler: totalSurveyHandler
+    },
+    {
+        method: 'GET',
+        path: '/survey_kandidat1',
+        handler: getSurveyKandidat1
+    },
+    {
+        method: 'GET',
+        path: '/survey_kandidat2',
+        handler: getSurveyKandidat2
+    },
+    {
+        method: 'GET',
+        path: '/survey_kandidat3',
+        handler: getSurveyKandidat3
+    },
     //Pertanyaan People
     {
         method: 'POST',
