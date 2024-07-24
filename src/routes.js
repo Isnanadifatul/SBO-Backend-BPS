@@ -17,7 +17,7 @@ const {createPegawai, readAllPegawai, getPegawaiByIdhandler, updatePegawaiHandle
 //Login
 const {createAuthentication, loginHandler, logoutHandler, updateAuthenticationHandler} = require('./handler-auth');
 //isi survey SBO
-const {isiSurveyHandler, getAverageScoresHandler} = require('./handler_survey_sbo');
+const {isiSurveyHandler, getAverageScoresHandler, getSurveyDataByLabelYearAndQuarter} = require('./handler_survey_sbo');
 //isi survey pegawai teladan
 const { insertSurveyHandler, totalSurveyHandler, getSurveyKandidat1, getSurveyKandidat2, getSurveyKandidat3,
         AVGConvert30} = require('./handler_karyawan_teladan');
@@ -534,9 +534,20 @@ const routes = [
     },
     {
         method: 'GET',
-        path: '/average-scores',
+        path: '/average-scores/{label}/{triwulan}/{tahun}',
         handler: getAverageScoresHandler,
-      },
+        options: {
+            auth: false
+        }
+    },
+    {
+        method: 'GET',
+        path: '/kartesius/{label}/{tahun}/{triwulan}',
+        handler: getSurveyDataByLabelYearAndQuarter,
+        options: {
+            auth: false
+        }
+    }
 
 ];
 

@@ -45,15 +45,20 @@ const isiSurveyHandler = async (request, h) => {
 
 // Function to calculate triwulan value
 const calculateTriwulan = async (Model, year, maxTriwulan) => {
-  const count = await Model.count({
-    where: { tahun: year }
+  const lastEntry = await Model.findOne({
+    where: { tahun: year },
+    order: [['triwulan', 'DESC']]
   });
-  const triwulan = Math.floor(count / maxTriwulan) + 1;
+
+  let triwulan = lastEntry ? lastEntry.triwulan + 1 : 1;
+
   if (triwulan > maxTriwulan) {
     throw new Error(`Triwulan tidak boleh lebih dari ${maxTriwulan} dalam satu tahun`);
   }
+
   return triwulan;
 };
+
 
 // Function to calculate average scores
 const calculateAverageScores = async (label, triwulan, tahun) => {
@@ -95,75 +100,60 @@ const getAverageScoresHandler = async (request, h) => {
   const { label, triwulan, tahun } = request.params;
 
   try {
-    const { avgScoresHarapan, avgScoresKinerja } = await calculateAverageScores(label, triwulan, tahun);
-    let Model;
-    let PertanyaanModel;
-    let labelPrefix;
-    let maxTriwulan;
-    let numQuestions;
+      const { avgScoresHarapan, avgScoresKinerja } = await calculateAverageScores(label, triwulan, tahun);
+      let Model;
+      let PertanyaanModel;
+      let numQuestions;
 
-    switch (label) {
-      case 'PriKer':
-        Model = hasil_survey_priker;
-        PertanyaanModel = pertanyaan_perilaku;
-        labelPrefix = 'priker';
-        maxTriwulan = 4;
-        numQuestions = 7;
-        break;
-      case 'PeBO':
-        Model = hasil_survey_pebo;
-        PertanyaanModel = pertanyaan_peop;
-        labelPrefix = 'pebo';
-        maxTriwulan = 4;
-        numQuestions = 21;
-        break;
-      case 'LeadBO':
-        Model = hasil_survey_leadbo;
-        PertanyaanModel = pertanyaan_lead;
-        labelPrefix = 'leadbo';
-        maxTriwulan = 4;
-        numQuestions = 8;
-        break;
-      case 'SysBO':
-        Model = hasil_survey_sysbo;
-        PertanyaanModel =pertanyaan_sys;
-        labelPrefix = 'sysbo';
-        maxTriwulan = 4;
-        numQuestions = 11;
-        break;
-      default:
-        throw new Error('Invalid label');
-    }
-
-    // memastikan triwulan tidak melebihi maxTriwulan
-    if (parseInt(triwulan) > maxTriwulan) {
-      throw new Error(`Triwulan tidak boleh lebih dari ${maxTriwulan}`);
-    }
-
-    const triwulan = await calculateTriwulan(Model, year, maxTriwulan);
-
-    for (let i = 0; i < avgScoresHarapan.length; i++) {
-      const idPertanyaan = i < numQuestions ? i + 1 : null;
-
-      if (idPertanyaan) {
-        const pertanyaanExists = await PertanyaanModel.findByPk(idPertanyaan);
-        if (!pertanyaanExists) {
-          throw new Error(`id_pertanyaan ${idPertanyaan} tidak ditemukan dalam tabel pertanyaan`);
-        }
+      switch (label) {
+          case 'PriKer':
+              Model = hasil_survey_priker;
+              PertanyaanModel = pertanyaan_perilaku;
+              numQuestions = 7;
+              break;
+          case 'PeBO':
+              Model = hasil_survey_pebo;
+              PertanyaanModel = pertanyaan_peop;
+              numQuestions = 21;
+              break;
+          case 'LeadBO':
+              Model = hasil_survey_leadbo;
+              PertanyaanModel = pertanyaan_lead;
+              numQuestions = 8;
+              break;
+          case 'SysBO':
+              Model = hasil_survey_sysbo;
+              PertanyaanModel = pertanyaan_sys;
+              numQuestions = 11;
+              break;
+          default:
+              throw new Error('Invalid label');
       }
 
-      await Model.create({
-        x: avgScoresKinerja[i],
-        y: avgScoresHarapan[i],
-        tahun: tahun,
-        triwulan: triwulan,
-        id_pertanyaan: idPertanyaan
-      });
-    }
+      const calculatedTriwulan = await calculateTriwulan(Model, tahun, 4);
 
-    return h.response({ label, avgScoresHarapan, avgScoresKinerja }).code(200);
+      for (let i = 0; i < avgScoresHarapan.length; i++) {
+          const idPertanyaan = i < numQuestions ? i + 1 : null;
+
+          if (idPertanyaan) {
+              const pertanyaanExists = await PertanyaanModel.findByPk(idPertanyaan);
+              if (!pertanyaanExists) {
+                  throw new Error(`id_pertanyaan ${idPertanyaan} tidak ditemukan dalam tabel pertanyaan`);
+              }
+          }
+
+          await Model.create({
+              x: avgScoresKinerja[i],
+              y: avgScoresHarapan[i],
+              tahun: tahun,
+              triwulan: calculatedTriwulan,
+              id_pertanyaan: idPertanyaan
+          });
+      }
+
+      return h.response({ label, avgScoresHarapan, avgScoresKinerja }).code(200);
   } catch (error) {
-    return h.response({ error: error.message }).code(500);
+      return h.response({ error: error.message }).code(500);
   }
 };
 
