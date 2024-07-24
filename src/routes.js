@@ -454,6 +454,9 @@ const routes = [
         method: 'POST',
         path: '/createPegawai',
         handler: createPegawai,
+        options: {
+            auth: false
+        }
     },
     {
         method: 'GET',
