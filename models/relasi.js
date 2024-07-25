@@ -8,7 +8,7 @@ const konversi = dbConnection.define('nilai_konversi_survey', {
         primaryKey: true,
         autoIncrement: true
     },
-    nama_kandidat: {
+    nomor_kandidat: {
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -26,6 +26,10 @@ const nilai_tambah = dbConnection.define('nilai_tambah', {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
+    },
+    nomor_kandidat: {
+        type: DataTypes.STRING,
+        allowNull: false
     },
     nama_kandidat: {
         type: DataTypes.STRING,
@@ -45,8 +49,8 @@ const nilai_tambah = dbConnection.define('nilai_tambah', {
 });
 
 // Defining associations
-konversi.hasMany(nilai_tambah, { foreignKey: 'nama_kandidat', sourceKey: 'nama_kandidat' });
-nilai_tambah.belongsTo(konversi, { foreignKey: 'nama_kandidat', targetKey: 'nama_kandidat' });
+konversi.hasMany(nilai_tambah, { foreignKey: 'nomor_kandidat', sourceKey: 'nomor_kandidat' });
+nilai_tambah.belongsTo(konversi, { foreignKey: 'nomor_kandidat', targetKey: 'nomor_kandidat' });
 
 module.exports = {
     konversi,
