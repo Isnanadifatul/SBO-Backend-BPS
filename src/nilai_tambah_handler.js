@@ -4,11 +4,11 @@ const { connection } = require('../db-config/connect');
 
 async function insertNilaiTambah(request, h) {
   try {
-    const {nama_kandidat, nilai_kip_app, nilai_presensi} = request.payload;
+    const {nomor_kandidat, nama_kandidat, nilai_kip_app, nilai_presensi} = request.payload;
 
   
     // Insert user baru
-    await insert(nama_kandidat, nilai_kip_app, nilai_presensi);
+    await insert(nomor_kandidat, nama_kandidat, nilai_kip_app, nilai_presensi);
     
 
     return h.response('Input Succes').code(201);
