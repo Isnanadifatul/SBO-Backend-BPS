@@ -50,7 +50,7 @@ const hasil_survey_leadbo = dbConnection.define('hasil_survey_leadbo', {
   id_pertanyaan : {
     type: DataTypes.INTEGER,
     references: {
-      model: 'pertanyaan_leadership',
+      model: 'pertanyaan_lead',
       key: 'id_pertanyaan'
     }
   },
@@ -82,7 +82,7 @@ const hasil_survey_pebo = dbConnection.define('hasil_survey_pebo', {
   id_pertanyaan: {
     type: DataTypes.INTEGER,
     references: {
-      model: 'pertanyaan_people',
+      model: 'pertanyaan_peop',
       key: 'id_pertanyaan'
     }
   },
@@ -114,7 +114,7 @@ const hasil_survey_sysbo = dbConnection.define('hasil_survey_sysbo', {
   id_pertanyaan: {
     type: DataTypes.INTEGER,
     references: {
-      model: 'pertanyaan_system',
+      model: 'pertanyaan_sys',
       key: 'id_pertanyaan'
     } 
   },
@@ -136,11 +136,11 @@ const hasil_survey_sysbo = dbConnection.define('hasil_survey_sysbo', {
   freezeTableName: true,
   timestamps: false
 });
-
+/*
 hasil_survey_priker.belongsTo(pertanyaan_perilaku, { foreignKey: 'id_pertanyaan' });
 hasil_survey_leadbo.belongsTo(pertanyaan_lead, { foreignKey: 'id_pertanyaan' });
 hasil_survey_pebo.belongsTo(pertanyaan_peop, { foreignKey: 'id_pertanyaan' });
 hasil_survey_sysbo.belongsTo(pertanyaan_sys, { foreignKey: 'id_pertanyaan' });
 
-  
+*/
 module.exports = {hasil_survey_priker, hasil_survey_leadbo, hasil_survey_pebo, hasil_survey_sysbo};

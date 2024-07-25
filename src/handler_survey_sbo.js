@@ -7,6 +7,19 @@ const { pertanyaan_peop } = require('../models/pertanyaan_people');
 const { pertanyaan_lead } = require('../models/pertanyaan_lead');
 const { pertanyaan_sys } = require('../models/pertanyaan_system');
 
+//asosiasi
+// Example for hasil_survey_priker and pertanyaan_perilaku
+hasil_survey_priker.belongsTo(pertanyaan_perilaku, { foreignKey: 'id_pertanyaan', targetKey: 'id_pertanyaan', as: 'pertanyaan_perilaku' });
+pertanyaan_perilaku.hasMany(hasil_survey_priker, { foreignKey: 'id_pertanyaan', sourceKey: 'id_pertanyaan' });
+hasil_survey_pebo.belongsTo(pertanyaan_peop, { foreignKey: 'id_pertanyaan', targetKey: 'id_pertanyaan', as: 'pertanyaan_people' });
+pertanyaan_peop.hasMany(hasil_survey_pebo, { foreignKey: 'id_pertanyaan', sourceKey: 'id_pertanyaan' });
+hasil_survey_leadbo.belongsTo(pertanyaan_lead, { foreignKey: 'id_pertanyaan', targetKey: 'id_pertanyaan', as: 'pertanyaan_leadership' });
+pertanyaan_lead.hasMany(hasil_survey_leadbo, { foreignKey: 'id_pertanyaan', sourceKey: 'id_pertanyaan' });
+hasil_survey_sysbo.belongsTo(pertanyaan_sys, { foreignKey: 'id_pertanyaan', targetKey: 'id_pertanyaan', as: 'pertanyaan_system' });
+pertanyaan_sys.hasMany(hasil_survey_sysbo, { foreignKey: 'id_pertanyaan', sourceKey: 'id_pertanyaan' });
+
+
+
 const isiSurveyHandler = async (request, h) => {
     const {triwulan, nama, jenis_kelamin, umur, pendidikan, masa_kerja, score_harapan, score_kinerja, label} = request.payload;
     const tahun = new Date().getFullYear();
@@ -44,21 +57,34 @@ const isiSurveyHandler = async (request, h) => {
 };
 
 // Function to calculate triwulan value
-const calculateTriwulan = async (Model, year, maxTriwulan) => {
-  const lastEntry = await Model.findOne({
-    where: { tahun: year },
+const calculateTriwulan = async (label, year) => {
+  const lastEntry = await survey_budaya_organisasi.findOne({
+    where: { label: { [Op.like]: `${label}%` }, tahun: year },
     order: [['triwulan', 'DESC']]
   });
 
-  let triwulan = lastEntry ? lastEntry.triwulan + 1 : 1;
-
-  if (triwulan > maxTriwulan) {
-    throw new Error(`Triwulan tidak boleh lebih dari ${maxTriwulan} dalam satu tahun`);
-  }
-
-  return triwulan;
+  return lastEntry ? lastEntry.triwulan : 1;
 };
 
+// Function to check if the survey data for a specific triwulan and year exists in the hasil_survey_priker table
+const checkExistingTriwulan = async (Model, year, triwulan) => {
+  const existingEntry = await Model.findOne({
+    where: { tahun: year, triwulan: triwulan }
+  });
+
+  return !!existingEntry;
+};
+
+
+// Function to get the latest triwulan from survey_budaya_organisasi
+const getLatestTriwulan = async (year, label) => {
+  const latestEntry = await survey_budaya_organisasi.findOne({
+    where: { tahun: year, label: { [Op.like]: `${label}%` } },
+    order: [['triwulan', 'DESC']]
+  });
+
+  return latestEntry ? latestEntry.triwulan : null;
+};
 
 // Function to calculate average scores
 const calculateAverageScores = async (label, triwulan, tahun) => {
@@ -100,63 +126,95 @@ const getAverageScoresHandler = async (request, h) => {
   const { label, triwulan, tahun } = request.params;
 
   try {
-      const { avgScoresHarapan, avgScoresKinerja } = await calculateAverageScores(label, triwulan, tahun);
-      let Model;
-      let PertanyaanModel;
-      let numQuestions;
+    const latestTriwulan = await getLatestTriwulan(tahun, label);
 
-      switch (label) {
-          case 'PriKer':
-              Model = hasil_survey_priker;
-              PertanyaanModel = pertanyaan_perilaku;
-              numQuestions = 7;
-              break;
-          case 'PeBO':
-              Model = hasil_survey_pebo;
-              PertanyaanModel = pertanyaan_peop;
-              numQuestions = 21;
-              break;
-          case 'LeadBO':
-              Model = hasil_survey_leadbo;
-              PertanyaanModel = pertanyaan_lead;
-              numQuestions = 8;
-              break;
-          case 'SysBO':
-              Model = hasil_survey_sysbo;
-              PertanyaanModel = pertanyaan_sys;
-              numQuestions = 11;
-              break;
-          default:
-              throw new Error('Invalid label');
+    if (!latestTriwulan || latestTriwulan < triwulan) {
+      return h.response({ error: `Survey dengan triwulan ${triwulan} belum ada` }).code(400);
+    }
+
+    const Model = getModelByLabel(label); // Function to get the model based on the label
+    const existingTriwulan = await checkExistingTriwulan(Model, tahun, triwulan);
+
+    if (existingTriwulan) {
+      return h.response({ error: `Survey ${label} dengan triwulan ${triwulan} sudah dihitung` }).code(400);
+    }
+
+    const { avgScoresHarapan, avgScoresKinerja } = await calculateAverageScores(label, triwulan, tahun);
+    const PertanyaanModel = getPertanyaanModelByLabel(label); // Function to get the pertanyaan model based on the label
+    const numQuestions = getNumQuestionsByLabel(label); // Function to get the number of questions based on the label
+
+    for (let i = 0; i < avgScoresHarapan.length; i++) {
+      const idPertanyaan = i < numQuestions ? i + 1 : null;
+
+      if (idPertanyaan) {
+        const pertanyaanExists = await PertanyaanModel.findByPk(idPertanyaan);
+        if (!pertanyaanExists) {
+          throw new Error(`id_pertanyaan ${idPertanyaan} tidak ditemukan dalam tabel pertanyaan`);
+        }
       }
 
-      const calculatedTriwulan = await calculateTriwulan(Model, tahun, 4);
+      await Model.create({
+        x: avgScoresKinerja[i],
+        y: avgScoresHarapan[i],
+        tahun: tahun,
+        triwulan: triwulan,
+        id_pertanyaan: idPertanyaan
+      });
+    }
 
-      for (let i = 0; i < avgScoresHarapan.length; i++) {
-          const idPertanyaan = i < numQuestions ? i + 1 : null;
-
-          if (idPertanyaan) {
-              const pertanyaanExists = await PertanyaanModel.findByPk(idPertanyaan);
-              if (!pertanyaanExists) {
-                  throw new Error(`id_pertanyaan ${idPertanyaan} tidak ditemukan dalam tabel pertanyaan`);
-              }
-          }
-
-          await Model.create({
-              x: avgScoresKinerja[i],
-              y: avgScoresHarapan[i],
-              tahun: tahun,
-              triwulan: calculatedTriwulan,
-              id_pertanyaan: idPertanyaan
-          });
-      }
-
-      return h.response({ label, avgScoresHarapan, avgScoresKinerja }).code(200);
+    return h.response({ label, avgScoresHarapan, avgScoresKinerja }).code(200);
   } catch (error) {
-      return h.response({ error: error.message }).code(500);
+    return h.response({ error: error.message }).code(500);
   }
 };
 
+// Function to get the appropriate model based on the label
+const getModelByLabel = (label) => {
+  switch (label) {
+    case 'PriKer':
+      return hasil_survey_priker;
+    case 'PeBO':
+      return hasil_survey_pebo;
+    case 'LeadBO':
+      return hasil_survey_leadbo;
+    case 'SysBO':
+      return hasil_survey_sysbo;
+    default:
+      throw new Error('Invalid label');
+  }
+};
+
+// Function to get the appropriate pertanyaan model based on the label
+const getPertanyaanModelByLabel = (label) => {
+  switch (label) {
+    case 'PriKer':
+      return pertanyaan_perilaku;
+    case 'PeBO':
+      return pertanyaan_peop;
+    case 'LeadBO':
+      return pertanyaan_lead;
+    case 'SysBO':
+      return pertanyaan_sys;
+    default:
+      throw new Error('Invalid label');
+  }
+};
+
+// Function to get the number of questions based on the label
+const getNumQuestionsByLabel = (label) => {
+  switch (label) {
+    case 'PriKer':
+      return 7;
+    case 'PeBO':
+      return 21;
+    case 'LeadBO':
+      return 8;
+    case 'SysBO':
+      return 11;
+    default:
+      throw new Error('Invalid label');
+  }
+};
 /*
 //read all
 const getSurveyPriker = async (request, h) => {
@@ -211,23 +269,28 @@ const getSurveyDataByLabelYearAndQuarter = async (request, h) => {
 
   let Model;
   let PertanyaanModel;
+  let pertanyaanAlias;
 
   switch (label) {
     case 'PriKer':
       Model = hasil_survey_priker;
       PertanyaanModel = pertanyaan_perilaku;
+      pertanyaanAlias = 'pertanyaan_perilaku';
       break;
     case 'PeBO':
       Model = hasil_survey_pebo;
       PertanyaanModel = pertanyaan_peop;
+      pertanyaanAlias = 'pertanyaan_peop';
       break;
     case 'LeadBO':
       Model = hasil_survey_leadbo;
       PertanyaanModel = pertanyaan_lead;
+      pertanyaanAlias = 'pertanyaan_lead';
       break;
     case 'SysBO':
       Model = hasil_survey_sysbo;
       PertanyaanModel = pertanyaan_sys;
+      pertanyaanAlias = 'pertanyaan_sys';
       break;
     default:
       return h.response({ error: 'Invalid label' }).code(400);
@@ -240,6 +303,7 @@ const getSurveyDataByLabelYearAndQuarter = async (request, h) => {
         model: PertanyaanModel,
         required: true,
         attributes: ['label'],
+        as: pertanyaanAlias
       }],
       logging: console.log
     });
@@ -251,7 +315,7 @@ const getSurveyDataByLabelYearAndQuarter = async (request, h) => {
       data: surveyData.map(item => ({
         x: parseFloat(item.x),
         y: parseFloat(item.y),
-        label: item[PertanyaanModel.name].label,
+        label: item[PertanyaanModel].label,
       }))
     };
 
