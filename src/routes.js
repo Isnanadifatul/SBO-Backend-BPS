@@ -23,9 +23,46 @@ const { insertSurveyHandler, totalSurveyHandler, getSurveyKandidat1, getSurveyKa
         AVGConvert30} = require('./handler_karyawan_teladan');
 const { getNilaiById, insertNilaiTambah, readNilai, updateNilai, deleteNilai} = require('./nilai_tambah_handler');
 const {getCombinedScores} = require('./handler_result');
-
+const kandidat_handler= require('./kandidat_handler');
 
 const routes = [
+    //Memilih kandidat
+    {
+        method: 'POST',
+        path: '/kandidat',
+        options: {
+            payload: {
+                maxBytes: 1048576,
+                output: 'data',
+                parse: true,
+                allow: 'multipart/form-data'
+            }
+        },
+        handler: kandidat_handler.createKandidat
+    },
+    {
+        method: 'GET',
+        path: '/kandidat/{id}',
+        handler: kandidat_handler.getKandidat
+    },
+    {
+        method: 'PUT',
+        path: '/kandidat/{id}',
+        options: {
+            payload: {
+                maxBytes: 1048576,
+                output: 'data',
+                parse: true,
+                allow: 'multipart/form-data'
+            }
+        },
+        handler: kandidat_handler.updateKandidatHandler
+    },
+    {
+        method: 'DELETE',
+        path: '/kandidat/{id}',
+        handler: kandidat_handler.deleteKandidatHandler
+    },
      //result
     {
         method: 'GET',
