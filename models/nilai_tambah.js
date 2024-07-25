@@ -10,17 +10,12 @@ const nilai_tambah = dbConnection.define('nilai_tambah', {
         primaryKey: true,
         autoIncrement: true
     },
-    nama_kandidat:{
-        type: DataTypes.STRING,
-        allowNull: false
+    nomor_kandidat:{
+        type: DataTypes.STRING
     },
-    // id_survey_p:{
-    //     type: DataTypes.INTEGER,
-    //     references: {
-    //         model: 'survey_pegawai_teladan',
-    //         key: 'id_pertanyaan',
-    //       },
-    // },
+    nama_kandidat:{
+        type: DataTypes.STRING
+    },
     nilai_kip_app:{
         type: DataTypes.FLOAT
     },
@@ -37,9 +32,9 @@ const nilai_tambah = dbConnection.define('nilai_tambah', {
 
 //insert nilai tambah
 
-const insert = async (nama_kandidat, nilai_kip_app, nilai_presensi) => {
+const insert = async (nomor_kandidat, nama_kandidat, nilai_kip_app, nilai_presensi) => {
     try {
-        const newUser = await nilai_tambah.create({nama_kandidat, nilai_kip_app, nilai_presensi});
+        const newUser = await nilai_tambah.create({nomor_kandidat, nama_kandidat, nilai_kip_app, nilai_presensi});
         console.log('Nilai berhasil diinput', newUser.toJSON());
     }catch (error) {
         console.error('Input data error guys!!:', error.message);
@@ -92,4 +87,3 @@ module.exports = {
     deleteNilaiTambah,
     nilai_tambah
 }
-
