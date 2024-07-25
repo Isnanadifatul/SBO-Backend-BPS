@@ -5,6 +5,7 @@ const getCombinedScores = async (request, h) => {
     try {
         const results = await konversi.findAll({
             attributes: [
+                'nomor_kandidat',
                 'nama_kandidat',
                 [Sequelize.literal(`
                     COALESCE(
@@ -12,7 +13,7 @@ const getCombinedScores = async (request, h) => {
                             nilai_konversi + (
                                 SELECT COALESCE(SUM(nilai_kip_app + nilai_presensi), 0)
                                 FROM nilai_tambah
-                                WHERE nilai_tambah.nama_kandidat = nilai_konversi_survey.nama_kandidat
+                                WHERE nilai_tambah.nomor_kandidat = nilai_konversi_survey.nomor_kandidat
                             )
                         ) / 3
                     , nilai_konversi / 3)
