@@ -1,0 +1,44 @@
+CREATE TABLE survey_pegawai_teladan_3 (
+  id_survey_p int(10) NOT NULL,
+  nip int(20) NOT NULL,
+  id_pertanyaan int(10) NOT NULL,
+  nama_lengkap varchar(50) NOT NULL,
+  jenis_kelamin varchar(10) NOT NULL,
+  umur int(10) NOT NULL,
+  pendidikan varchar(20) NOT NULL,
+  masa_kerja varchar(10) NOT NULL,
+  nama_kandidat varchar(50) NOT NULL,
+  score int(4) NOT NULL
+)
+ALTER TABLE survey_pegawai_teladan_3
+MODIFY COLUMN id_survey_p INT NOT NULL AUTO_INCREMENT,
+ADD PRIMARY KEY (id_survey_p);
+
+SELECT pertanyaan_1 + pertanyaan_2 + pertanyaan_3 + pertanyaan_4 + pertanyaan_5 + pertanyaan_6 + pertanyaan_7 + pertanyaan_8 + pertanyaan_9 + pertanyaan_10 + pertanyaan_11 + pertanyaan_12 + pertanyaan_13 + pertanyaan_14 + pertanyaan_15 + pertanyaan_16 + pertanyaan_17 + pertanyaan_18 + pertanyaan_19 + pertanyaan_20 + pertanyaan_21 AS hasil FROM survey_pegawai_teladan;
+
+//----------------------------------
+SELECT 
+    nama_kandidat, 
+    SUM(
+        pertanyaan_1 + pertanyaan_2 + pertanyaan_3 + pertanyaan_4 + pertanyaan_5 + 
+        pertanyaan_6 + pertanyaan_7 + pertanyaan_8 + pertanyaan_9 + pertanyaan_10 + 
+        pertanyaan_11 + pertanyaan_12 + pertanyaan_13 + pertanyaan_14 + pertanyaan_15 + 
+        pertanyaan_16 + pertanyaan_17 + pertanyaan_18 + pertanyaan_19 + pertanyaan_20 + 
+        pertanyaan_21
+    ) AS total_hasil 
+FROM survey_pegawai_teladan WHERE nama_kandidat = "Kandidat 3" GROUP BY nama_kandidat;
+
+//menghitung nilai final survey_pegawai_teladan
+SELECT 
+    nilai_tambah.nama_kandidat,
+    (t1.nilai_kip_app + t1.nilai_presensi + t2.nilai_hasil_survey) AS total_nilai
+FROM 
+    tabel1 t1
+JOIN 
+    tabel2 t2 ON t1.nama_kandidat = t2.nama_kandidat
+GROUP BY 
+    t1.nama_kandidat;
+
+ALTER TABLE nilai_tambah
+ADD CONSTRAINT fk_survey_pegawai_teladan
+FOREIGN KEY (id_survey_p) REFERENCES survey_karTeladan(id);
