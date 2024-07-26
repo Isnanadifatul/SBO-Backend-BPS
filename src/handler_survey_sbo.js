@@ -7,8 +7,7 @@ const { pertanyaan_peop } = require('../models/pertanyaan_people');
 const { pertanyaan_lead } = require('../models/pertanyaan_lead');
 const { pertanyaan_sys } = require('../models/pertanyaan_system');
 
-//asosiasi
-// Example for hasil_survey_priker and pertanyaan_perilaku
+//asosiasi table
 hasil_survey_priker.belongsTo(pertanyaan_perilaku, { foreignKey: 'id_pertanyaan', targetKey: 'id_pertanyaan', as: 'pertanyaan_perilaku' });
 pertanyaan_perilaku.hasMany(hasil_survey_priker, { foreignKey: 'id_pertanyaan', sourceKey: 'id_pertanyaan' });
 hasil_survey_pebo.belongsTo(pertanyaan_peop, { foreignKey: 'id_pertanyaan', targetKey: 'id_pertanyaan', as: 'pertanyaan_people' });
@@ -17,7 +16,6 @@ hasil_survey_leadbo.belongsTo(pertanyaan_lead, { foreignKey: 'id_pertanyaan', ta
 pertanyaan_lead.hasMany(hasil_survey_leadbo, { foreignKey: 'id_pertanyaan', sourceKey: 'id_pertanyaan' });
 hasil_survey_sysbo.belongsTo(pertanyaan_sys, { foreignKey: 'id_pertanyaan', targetKey: 'id_pertanyaan', as: 'pertanyaan_system' });
 pertanyaan_sys.hasMany(hasil_survey_sysbo, { foreignKey: 'id_pertanyaan', sourceKey: 'id_pertanyaan' });
-
 
 
 const isiSurveyHandler = async (request, h) => {
@@ -56,7 +54,7 @@ const isiSurveyHandler = async (request, h) => {
     }
 };
 
-// Function to calculate triwulan value
+// fungsi untuk menghitung triwulan
 const calculateTriwulan = async (label, year) => {
   const lastEntry = await survey_budaya_organisasi.findOne({
     where: { label: { [Op.like]: `${label}%` }, tahun: year },
@@ -66,7 +64,7 @@ const calculateTriwulan = async (label, year) => {
   return lastEntry ? lastEntry.triwulan : 1;
 };
 
-// Function to check if the survey data for a specific triwulan and year exists in the hasil_survey_priker table
+//fungsi untuk mengecek apakah data triwulan dan tahun ada pada tabel  hasil_survey_priker, dll
 const checkExistingTriwulan = async (Model, year, triwulan) => {
   const existingEntry = await Model.findOne({
     where: { tahun: year, triwulan: triwulan }
@@ -75,8 +73,8 @@ const checkExistingTriwulan = async (Model, year, triwulan) => {
   return !!existingEntry;
 };
 
-
 // Function to get the latest triwulan from survey_budaya_organisasi
+//fungsi untuk men
 const getLatestTriwulan = async (year, label) => {
   const latestEntry = await survey_budaya_organisasi.findOne({
     where: { tahun: year, label: { [Op.like]: `${label}%` } },
@@ -227,41 +225,14 @@ const getSurveyPriker = async (request, h) => {
   }
 };
 */
-/*
-// Definisi asosiasi
-hasil_survey_priker.belongsTo(pertanyaan_perilaku, { foreignKey: 'id_pertanyaan', targetKey: 'id_pertanyaan' });
+// mengecek apabila triwulan ada pada table
+const checkTriwulanExists = async (Model, tahun, triwulan) => {
+  const existingEntry = await Model.findOne({
+    where: { tahun: tahun, triwulan: triwulan }
+  });
 
-//Menampilkan hasil survey pada Diagram Kartesius
-const getSurveyDataByYearAndQuarter = async (request, h) => {
-  const { tahun, triwulan } = request.params;
-  try {
-    const surveyData = await hasil_survey_priker.findAll({
-      where: { tahun: tahun, triwulan: triwulan },
-      include: [{
-        model: pertanyaan_perilaku,
-        required: true,
-        attributes: ['label'],
-      }],
-      logging: console.log
-    });
-
-    const formattedResponse = {
-      tahun: tahun,
-      triwulan: triwulan,
-      data: surveyData.map(item => ({
-        x: parseFloat(item.x),
-        y: parseFloat(item.y),
-        label: item.pertanyaan_perilaku.label,
-      }))
-    };
-
-    return h.response(formattedResponse).code(200);
-  } catch (error) {
-    console.error('Error fetching survey data:', error);
-    return h.response({ error: 'Internal server error' }).code(500);
-  }
+  return !!existingEntry;
 };
-*/
 
 //menampilkan hasil survey pada diagram kartesius
 const getSurveyDataByLabelYearAndQuarter = async (request, h) => {
@@ -280,23 +251,30 @@ const getSurveyDataByLabelYearAndQuarter = async (request, h) => {
     case 'PeBO':
       Model = hasil_survey_pebo;
       PertanyaanModel = pertanyaan_peop;
-      pertanyaanAlias = 'pertanyaan_peop';
+      pertanyaanAlias = 'pertanyaan_people';
       break;
     case 'LeadBO':
       Model = hasil_survey_leadbo;
       PertanyaanModel = pertanyaan_lead;
-      pertanyaanAlias = 'pertanyaan_lead';
+      pertanyaanAlias = 'pertanyaan_leadership';
       break;
     case 'SysBO':
       Model = hasil_survey_sysbo;
       PertanyaanModel = pertanyaan_sys;
-      pertanyaanAlias = 'pertanyaan_sys';
+      pertanyaanAlias = 'pertanyaan_system';
       break;
     default:
       return h.response({ error: 'Invalid label' }).code(400);
   }
 
   try {
+     
+    const triwulanExists = await checkTriwulanExists(Model, tahun, triwulan);
+
+    if (!triwulanExists) {
+      return h.response({ error: `Survey dengan triwulan ${triwulan} belum tersedia` }).code(400);
+    }
+
     const surveyData = await Model.findAll({
       where: { tahun: tahun, triwulan: triwulan },
       include: [{
@@ -315,7 +293,7 @@ const getSurveyDataByLabelYearAndQuarter = async (request, h) => {
       data: surveyData.map(item => ({
         x: parseFloat(item.x),
         y: parseFloat(item.y),
-        label: item[PertanyaanModel].label,
+        label: item[pertanyaanAlias].label,
       }))
     };
 
@@ -325,8 +303,5 @@ const getSurveyDataByLabelYearAndQuarter = async (request, h) => {
     return h.response({ error: 'Internal server error' }).code(500);
   }
 };
-
-
-
 
 module.exports = { isiSurveyHandler, getAverageScoresHandler, getAverageScoresHandler, calculateAverageScores, getSurveyDataByLabelYearAndQuarter };

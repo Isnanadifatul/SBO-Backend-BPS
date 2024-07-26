@@ -555,6 +555,7 @@ const routes = [
           }
         }
     },
+    //Isi survey SBO
     {
         method: 'POST',
         path: '/isiSurvey',
@@ -563,15 +564,7 @@ const routes = [
             auth: false
         }
     },
-    //survey SBO
-    {
-        method: 'GET',
-        path: '/survey/average/{label}',
-        handler: getAverageScoresHandler,
-        options: {
-            auth: false
-        }
-    },
+    //menghitung rata-rata
     {
         method: 'GET',
         path: '/average-scores/{label}/{triwulan}/{tahun}',
@@ -580,6 +573,7 @@ const routes = [
             auth: false
         }
     },
+    //menampilkan pada kartesius
     {
         method: 'GET',
         path: '/kartesius/{label}/{tahun}/{triwulan}',

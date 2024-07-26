@@ -136,6 +136,7 @@ const hasil_survey_sysbo = dbConnection.define('hasil_survey_sysbo', {
   freezeTableName: true,
   timestamps: false
 });
+
 /*
 hasil_survey_priker.belongsTo(pertanyaan_perilaku, { foreignKey: 'id_pertanyaan' });
 hasil_survey_leadbo.belongsTo(pertanyaan_lead, { foreignKey: 'id_pertanyaan' });
