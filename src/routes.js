@@ -27,10 +27,9 @@ const routes = [
         path: '/kandidat',
         options: {
             payload: {
-                maxBytes: 1048576,
-                output: 'data',
+                output: 'stream',
                 parse: true,
-                allow: 'multipart/form-data'
+                multipart: true
             }
         },
         handler: kandidat_handler.createKandidat
