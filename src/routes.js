@@ -24,7 +24,8 @@ const { insertSurveyHandler, totalSurveyHandler, getSurveyKandidat1, getSurveyKa
 const { getNilaiById, insertNilaiTambah, readNilai, updateNilai, deleteNilai} = require('./nilai_tambah_handler');
 const {getCombinedScores} = require('./handler_result');
 const kandidat_handler= require('./kandidat_handler');
-
+//gap analisis sbo
+const {getHasilSurveyPriKer} = require('./handler_gap_analisis')
 const routes = [
     //Memilih kandidat
     {
@@ -581,7 +582,17 @@ const routes = [
         options: {
             auth: false
         }
+    },
+    //menampilkan gap analisis pada tabel
+    {
+        method: 'GET',
+        path: '/gap-survey-priker',
+        handler: getHasilSurveyPriKer,
+        options: {
+            auth: false
+        }
     }
+
 
 ];
 
