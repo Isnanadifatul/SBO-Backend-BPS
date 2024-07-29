@@ -18,18 +18,26 @@ const { getNilaiById, insertNilaiTambah, readNilai, updateNilai, deleteNilai} = 
 const {createAuthentication, loginHandler, logoutHandler, updateAuthenticationHandler} = require('./handler-auth');
 const kandidat_handler= require('./kandidat_handler');
 const {getCombinedScores} = require('./handler_result');
+const {searchHandler} = require('./search_handler');
 
 
 const routes = [
+    //Search by triwulan & tahun
+    {
+        method: 'GET',
+        path: '/search',
+        handler: searchHandler
+    },
     //Memilih kandidat
     {
         method: 'POST',
         path: '/kandidat',
         options: {
             payload: {
-                output: 'stream',
+                maxBytes: 1048576,
+                output: 'data',
                 parse: true,
-                multipart: true
+                allow: 'multipart/form-data'
             }
         },
         handler: kandidat_handler.createKandidat

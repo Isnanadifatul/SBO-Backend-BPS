@@ -5,7 +5,7 @@ const { connection } = require('../db-config/connect');
 //insert survey1
 async function insertSurveyHandler(request, h) {
   try {
-      const {nama_lengkap, nip, jenis_kelamin, umur, pendidikan, masa_kerja, nomor_kandidat, nama_kandidat,
+      const {triwulan, nama_lengkap, nip, jenis_kelamin, umur, pendidikan, masa_kerja, nomor_kandidat, nama_kandidat,
         pertanyaan_1, pertanyaan_2, pertanyaan_3, pertanyaan_4, pertanyaan_5, 
         pertanyaan_6, pertanyaan_7, pertanyaan_8, pertanyaan_9, pertanyaan_10,
         pertanyaan_11, pertanyaan_12, pertanyaan_13, pertanyaan_14, pertanyaan_15,
@@ -13,7 +13,7 @@ async function insertSurveyHandler(request, h) {
         pertanyaan_21} = request.payload;
 
       // Insert user baru
-      await insertUser(nama_lengkap, nip, jenis_kelamin, umur, pendidikan, masa_kerja, nomor_kandidat, nama_kandidat,
+      await insertUser(triwulan, nama_lengkap, nip, jenis_kelamin, umur, pendidikan, masa_kerja, nomor_kandidat, nama_kandidat,
         pertanyaan_1, pertanyaan_2, pertanyaan_3, pertanyaan_4, pertanyaan_5, 
         pertanyaan_6, pertanyaan_7, pertanyaan_8, pertanyaan_9, pertanyaan_10,
         pertanyaan_11, pertanyaan_12, pertanyaan_13, pertanyaan_14, pertanyaan_15,

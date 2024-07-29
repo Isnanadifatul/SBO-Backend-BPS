@@ -18,6 +18,12 @@ const survey_pegawai_teladan = dbConnection.define('survey_pegawai_teladan', {
         primaryKey: true,
         autoIncrement: true
     },
+    tahun:{
+        type: DataTypes.DATE
+    },
+    triwulan:{
+        type: DataTypes.INTEGER
+    },
     nip:{
         type: DataTypes.INTEGER,
      },
@@ -118,6 +124,14 @@ const konversi = dbConnection.define('konversi', {
         primaryKey: true,
         autoIncrement: true
     },
+    tahun:{
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    triwulan:{
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
     nomor_kandidat : {
         type: DataTypes.STRING,
         allowNull: false
@@ -147,14 +161,14 @@ const saveKonversi = async (nomor_kandidat, nama_kandidat, nilai_konversi) => {
 };
 
   // Insert nilai survey
-  const insertUser = async (nama_lengkap,nip, jenis_kelamin, umur, pendidikan, masa_kerja, nomor_kandidat, nama_kandidat,
+  const insertUser = async (triwulan, nama_lengkap, nip, jenis_kelamin, umur, pendidikan, masa_kerja, nomor_kandidat, nama_kandidat,
         pertanyaan_1, pertanyaan_2, pertanyaan_3, pertanyaan_4, pertanyaan_5, 
         pertanyaan_6, pertanyaan_7, pertanyaan_8, pertanyaan_9, pertanyaan_10,
         pertanyaan_11, pertanyaan_12, pertanyaan_13, pertanyaan_14, pertanyaan_15,
         pertanyaan_16, pertanyaan_17, pertanyaan_18, pertanyaan_19, pertanyaan_20,
         pertanyaan_21) => {
     try {
-      const newUser = await survey_pegawai_teladan.create({nama_lengkap, nip,  jenis_kelamin, umur, pendidikan, masa_kerja, nomor_kandidat, nama_kandidat,
+      const newUser = await survey_pegawai_teladan.create({triwulan, nama_lengkap, nip, jenis_kelamin, umur, pendidikan, masa_kerja, nomor_kandidat, nama_kandidat,
         pertanyaan_1, pertanyaan_2, pertanyaan_3, pertanyaan_4, pertanyaan_5, 
         pertanyaan_6, pertanyaan_7, pertanyaan_8, pertanyaan_9, pertanyaan_10,
         pertanyaan_11, pertanyaan_12, pertanyaan_13, pertanyaan_14, pertanyaan_15,

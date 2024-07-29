@@ -1,6 +1,7 @@
 const connection = require('../db-config/connect');
 const {DataTypes} = require('sequelize');
 const mysql = require('mysql2/promise');
+const { date } = require('joi');
 
 const dbConnection = connection.connect;
 
@@ -9,6 +10,9 @@ const Kandidat = dbConnection.define('Kandidat', {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
+  },
+  tahun: {
+    type: DataTypes.DATE
   },
   nomor_kandidat: {
     type: DataTypes.STRING

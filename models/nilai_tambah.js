@@ -10,6 +10,12 @@ const nilai_tambah = dbConnection.define('nilai_tambah', {
         primaryKey: true,
         autoIncrement: true
     },
+    tahun:{
+        type: DataTypes.DATE
+    },
+    triwulan: {
+        type: DataTypes.INTEGER
+    },
     nomor_kandidat:{
         type: DataTypes.STRING
     },
@@ -32,9 +38,9 @@ const nilai_tambah = dbConnection.define('nilai_tambah', {
 
 //insert nilai tambah
 
-const insert = async (nomor_kandidat, nama_kandidat, nilai_kip_app, nilai_presensi) => {
+const insert = async (triwulan, nomor_kandidat, nama_kandidat, nilai_kip_app, nilai_presensi) => {
     try {
-        const newUser = await nilai_tambah.create({nomor_kandidat, nama_kandidat, nilai_kip_app, nilai_presensi});
+        const newUser = await nilai_tambah.create({triwulan, nomor_kandidat, nama_kandidat, nilai_kip_app, nilai_presensi});
         console.log('Nilai berhasil diinput', newUser.toJSON());
     }catch (error) {
         console.error('Input data error guys!!:', error.message);

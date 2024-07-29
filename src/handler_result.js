@@ -17,7 +17,7 @@ const getCombinedScores = async (request, h) => {
                             )
                         ) / 3
                     , nilai_konversi / 3)
-                `), 'total_nilai_divided_by_3']
+                `), 'skor']
             ],
             raw: true
         });
