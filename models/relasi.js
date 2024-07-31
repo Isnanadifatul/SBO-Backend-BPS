@@ -8,13 +8,23 @@ const konversi = dbConnection.define('nilai_konversi_survey', {
         primaryKey: true,
         autoIncrement: true
     },
+    tahun: {
+        type: DataTypes.DATE
+    },
+    triwulan: {
+        type:DataTypes.INTEGER
+    },
     nomor_kandidat: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    nama_kandidat : {
         type: DataTypes.STRING,
         allowNull: false
     },
     nilai_konversi: {
         type: DataTypes.FLOAT,
-        allowNull: false
+        allowNull:false
     }
 }, {
     tableName: 'nilai_konversi_survey',

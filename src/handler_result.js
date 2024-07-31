@@ -22,8 +22,8 @@ const getCombinedScores = async (request, h) => {
                                 nilai_tambah.nomor_kandidat = nilai_konversi_survey.nomor_kandidat 
 
                             )
-                        ) / 3
-                    , nilai_konversi / 3
+                        ) 
+                    , nilai_konversi
                     ), 2
                 )
                 `), 'result_scores']

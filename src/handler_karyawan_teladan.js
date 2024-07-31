@@ -122,11 +122,11 @@ const AVGConvert30 = async (request, h) => {
                        pertanyaan_6 + pertanyaan_7 + pertanyaan_8 + pertanyaan_9 + pertanyaan_10 + 
                        pertanyaan_11 + pertanyaan_12 + pertanyaan_13 + pertanyaan_14 + pertanyaan_15 + 
                        pertanyaan_16 + pertanyaan_17 + pertanyaan_18 + pertanyaan_19 + pertanyaan_20 + 
-                       pertanyaan_21) / 21
+                       pertanyaan_21) / 21 * 0.3
                   )
-              `), 2), 'avg_total_hasil_30_percent']
+              `), 2), 'avg_total_hasil_30_percent' ]
           ],
-          group: ['tahun', 'triwulan', 'nomor_kandidat', 'nama_kandidat'],
+          group: ['tahun','triwulan','nomor_kandidat'],
           raw: true,
       });
 
@@ -163,17 +163,19 @@ const getSurveyKandidat1 = async (request, h) => {
           'tahun',
           'triwulan',
           'nama_kandidat',
-          'pertanyaan_1','pertanyaan_2','pertanyaan_3','pertanyaan_4','pertanyaan_5',
-          'pertanyaan_6','pertanyaan_7','pertanyaan_8','pertanyaan_9','pertanyaan_10',
-          'pertanyaan_11','pertanyaan_12','pertanyaan_13','pertanyaan_14', 'pertanyaan_15',
-          'pertanyaan_16','pertanyaan_17', 'pertanyaan_18', 'pertanyaan_19', 'pertanyaan_20',
+          'pertanyaan_1', 'pertanyaan_2', 'pertanyaan_3', 'pertanyaan_4', 'pertanyaan_5',
+          'pertanyaan_6', 'pertanyaan_7', 'pertanyaan_8', 'pertanyaan_9', 'pertanyaan_10',
+          'pertanyaan_11', 'pertanyaan_12', 'pertanyaan_13', 'pertanyaan_14', 'pertanyaan_15',
+          'pertanyaan_16', 'pertanyaan_17', 'pertanyaan_18', 'pertanyaan_19', 'pertanyaan_20',
           'pertanyaan_21'
-      ],
-          where: {
-            nomor_kandidat: 'Kandidat 1'
-          },
-          group: ['tahun','triwulan','nomor_kandidat'],
-          order: [['triwulan', 'DESC']]
+        ],
+        where: {
+          nomor_kandidat: 'Kandidat 2'
+        },
+        order: [
+          ['tahun', 'DESC'],
+          ['triwulan', 'DESC']
+        ]
       });
 
       if (results.length === 0) {
@@ -193,18 +195,20 @@ const getSurveyKandidat2 = async (request, h) => {
           'tahun',
           'triwulan',
           'nama_kandidat',
-          'pertanyaan_1','pertanyaan_2','pertanyaan_3','pertanyaan_4','pertanyaan_5',
-          'pertanyaan_6','pertanyaan_7','pertanyaan_8','pertanyaan_9','pertanyaan_10',
-          'pertanyaan_11','pertanyaan_12','pertanyaan_13','pertanyaan_14', 'pertanyaan_15',
-          'pertanyaan_16','pertanyaan_17', 'pertanyaan_18', 'pertanyaan_19', 'pertanyaan_20',
+          'pertanyaan_1', 'pertanyaan_2', 'pertanyaan_3', 'pertanyaan_4', 'pertanyaan_5',
+          'pertanyaan_6', 'pertanyaan_7', 'pertanyaan_8', 'pertanyaan_9', 'pertanyaan_10',
+          'pertanyaan_11', 'pertanyaan_12', 'pertanyaan_13', 'pertanyaan_14', 'pertanyaan_15',
+          'pertanyaan_16', 'pertanyaan_17', 'pertanyaan_18', 'pertanyaan_19', 'pertanyaan_20',
           'pertanyaan_21'
-      ],
-          where: {
-            nomor_kandidat: 'Kandidat 2'
-          },
-          group: ['tahun','triwulan','nomor_kandidat'],
-          order: [['triwulan', 'DESC']]
-        });
+        ],
+        where: {
+          nomor_kandidat: 'Kandidat 2'
+        },
+        order: [
+          ['tahun', 'DESC'],
+          ['triwulan', 'DESC']
+        ]
+      });
 
       if (results.length === 0) {
           return h.response({ error: 'Data not found' }).code(404);
@@ -224,17 +228,19 @@ const getSurveyKandidat3 = async (request, h) => {
           'tahun',
           'triwulan',
           'nama_kandidat',
-          'pertanyaan_1','pertanyaan_2','pertanyaan_3','pertanyaan_4','pertanyaan_5',
-          'pertanyaan_6','pertanyaan_7','pertanyaan_8','pertanyaan_9','pertanyaan_10',
-          'pertanyaan_11','pertanyaan_12','pertanyaan_13','pertanyaan_14', 'pertanyaan_15',
-          'pertanyaan_16','pertanyaan_17', 'pertanyaan_18', 'pertanyaan_19', 'pertanyaan_20',
+          'pertanyaan_1', 'pertanyaan_2', 'pertanyaan_3', 'pertanyaan_4', 'pertanyaan_5',
+          'pertanyaan_6', 'pertanyaan_7', 'pertanyaan_8', 'pertanyaan_9', 'pertanyaan_10',
+          'pertanyaan_11', 'pertanyaan_12', 'pertanyaan_13', 'pertanyaan_14', 'pertanyaan_15',
+          'pertanyaan_16', 'pertanyaan_17', 'pertanyaan_18', 'pertanyaan_19', 'pertanyaan_20',
           'pertanyaan_21'
-      ],
-          where: {
-            nomor_kandidat: 'Kandidat 3'
-          },
-          group: ['tahun','triwulan','nomor_kandidat'],
-          order: [['triwulan', 'DESC']]
+        ],
+        where: {
+          nomor_kandidat: 'Kandidat 2'
+        },
+        order: [
+          ['tahun', 'DESC'],
+          ['triwulan', 'DESC']
+        ]
       });
 
       if (results.length === 0) {

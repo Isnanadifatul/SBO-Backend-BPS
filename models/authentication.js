@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const connection = require('../db-config/connect');
 const { DataTypes } = require('sequelize');
 const mysql = require('mysql2/promise');
+const { error } = require('@hapi/joi/lib/base');
 
 const dbConnection = connection.connect;
 
@@ -36,6 +37,14 @@ const Authentication = dbConnection.define('Authentication', {
   timestamps: false
 });
 
+//
+// dbConnection.sync( {alter:true})
+// .then(() => {
+//   console.log('Database created');
+// })
+// .catch((error) => {
+//   console.error('Unabel to create table :', error);
+// });
 // Insert Authentication
 const insertUser = async (role, hashedPassword, confirmasi_password, nip) => {
   try {
