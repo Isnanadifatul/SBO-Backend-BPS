@@ -1,6 +1,7 @@
 const connection = require('../db-config/connect');
 const {DataTypes} = require('sequelize');
 const mysql = require('mysql2/promise');
+const { date } = require('joi');
 
 const dbConnection = connection.connect;
 
@@ -10,6 +11,12 @@ const Kandidat = dbConnection.define('Kandidat', {
     primaryKey: true,
     autoIncrement: true
   },
+  tahun: {
+    type: DataTypes.DATE
+  },
+  triwulan:{
+    type: DataTypes.INTEGER
+  },
   nomor_kandidat: {
     type: DataTypes.STRING
   },
@@ -17,24 +24,13 @@ const Kandidat = dbConnection.define('Kandidat', {
     type: DataTypes.STRING
   },
   foto: {
-    type: DataTypes.TEXT
+    type: DataTypes.BLOB('long')
   }
 }, {
   tableName: 'kandidat',
   freezeTableName: true,
   timestamps: false
 });
-
-const insertKandidat = async (nomor_kandidat, nama_kandidat, foto) => {
-  try {
-    const newKandidat = await Kandidat.create({ nomor_kandidat, nama_kandidat, foto });
-    console.log('Kandidat inserted:', newKandidat.toJSON());
-    return newKandidat;
-  } catch (error) {
-    console.error('Error inserting kandidat:', error.message);
-    throw error;
-  }
-};
 
 const updateKandidat = async (id, newData) => {
   try {
@@ -74,4 +70,4 @@ const deleteKandidat = async (id) => {
   }
 };
 
-module.exports = { Kandidat, insertKandidat, updateKandidat, deleteKandidat };
+module.exports = { Kandidat, updateKandidat, deleteKandidat };
