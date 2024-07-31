@@ -10,7 +10,7 @@ const connection = mysql.createPool({
 
 async function search(triwulan, tahun) {
     const [rows] = await connection.execute(
-        'SELECT * FROM survey_pegawai_teladan WHERE triwulan = ? AND tahun LIKE ?',
+        'SELECT * FROM pemenang_survey_pegawai_teladan WHERE triwulan = ? AND tahun LIKE ? ORDER BY nilai DESC LIMIT 1',
         [triwulan, `%${tahun}%`]
     );
     return rows;

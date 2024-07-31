@@ -1,10 +1,7 @@
 const connection = require('../db-config/connect');
-// const {DataTypes} = require('sequelize');
 const mysql = require('mysql2/promise');
 
 const { Sequelize, DataTypes } = require('sequelize');
-const { nilai_tambah } = require('./nilai_tambah');
-const { allow } = require('joi');
 
 const dbConnection = new Sequelize('sbo', 'root', '', {
     host: 'localhost',
@@ -126,7 +123,6 @@ const konversi = dbConnection.define('konversi', {
     },
     tahun:{
         type: DataTypes.DATE,
-        allowNull: false
     },
     triwulan:{
         type: DataTypes.INTEGER,
@@ -150,13 +146,28 @@ const konversi = dbConnection.define('konversi', {
 })
 
 
-const saveKonversi = async (nomor_kandidat, nama_kandidat, nilai_konversi) => {
+const saveKonversi = async (tahun, triwulan, nomor_kandidat, nama_kandidat, avg_total_hasil_30_percent) => {
+    const query = `
+        INSERT INTO nilai_konversi_survey (tahun, triwulan, nomor_kandidat, nama_kandidat, nilai_konversi)
+        VALUES (:tahun, :triwulan, :nomor_kandidat, :nama_kandidat, :nilai_konversi)
+        ON DUPLICATE KEY UPDATE
+        nilai_konversi = VALUES(nilai_konversi);
+    `;
+
     try {
-        const newResponse = await konversi.create({ nomor_kandidat, nama_kandidat, nilai_konversi });
-        console.log('Response berhasil disimpan:', newResponse.toJSON());
+        await dbConnection.query(query, {
+            replacements: {
+                tahun,
+                triwulan,
+                nomor_kandidat,
+                nama_kandidat,
+                nilai_konversi: avg_total_hasil_30_percent
+            },
+            type: Sequelize.QueryTypes.INSERT
+        });
+        console.log('Data inserted/updated successfully');
     } catch (error) {
-        console.error('Gagal menyimpan response:', error.message);
-        throw error;
+        console.error('Error inserting/updating data:', error);
     }
 };
 

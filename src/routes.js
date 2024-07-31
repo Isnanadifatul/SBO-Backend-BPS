@@ -32,15 +32,14 @@ const routes = [
     {
         method: 'POST',
         path: '/kandidat',
+        handler: kandidat_handler.createKandidat,
         options: {
             payload: {
-                maxBytes: 1048576,
-                output: 'data',
+                output: 'stream',
                 parse: true,
-                allow: 'multipart/form-data'
-            }
-        },
-        handler: kandidat_handler.createKandidat
+                multipart: true,
+            },
+        }
     },
     {
         method: 'GET',
