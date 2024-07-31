@@ -1,10 +1,17 @@
-const { Kandidat, insertKandidat, updateKandidat, deleteKandidat } = require('../models/kandidat');
+const fs = require('fs');
+const { Kandidat, updateKandidat, deleteKandidat } = require('../models/kandidat');
 
 const createKandidat = async (request, h) => {
-  const { nomor_kandidat, nama_kandidat, foto } = request.payload;
-  const base64Image = foto.toString('base64');
-  const newKandidat = await insertKandidat(nomor_kandidat, nama_kandidat, base64Image);
-  return { message: 'Kandidat berhasil ditambahkan', newKandidat };
+  const { triwulan, nomor_kandidat, nama_kandidat } = request.payload;
+  const foto = request.payload.foto._data;
+
+  try {
+      const newKandidat = await Kandidat.create({ triwulan, nomor_kandidat, nama_kandidat, foto });
+      return h.response(newKandidat).code(201);
+  } catch (error) {
+      console.error(error);
+      return h.response({ error: 'Failed to add kandidat' }).code(500);
+  }
 };
 
 const getKandidat = async (request, h) => {
