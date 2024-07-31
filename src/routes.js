@@ -26,7 +26,15 @@ const {getCombinedScores} = require('./handler_result');
 const kandidat_handler= require('./kandidat_handler');
 //gap analisis sbo
 const {getHasilSurveyPriKer} = require('./handler_gap_analisis')
+//search pegawai teladan
+const {searchHandler} = require('./search_handler');
 const routes = [
+ //Search by triwulan & tahun
+    {
+        method: 'GET',
+        path: '/search',
+        handler: searchHandler
+    },
     //Memilih kandidat
     {
         method: 'POST',
