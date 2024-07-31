@@ -49,8 +49,15 @@ const nilai_tambah = dbConnection.define('nilai_tambah', {
 });
 
 // Defining associations
-konversi.hasMany(nilai_tambah, { foreignKey: 'nomor_kandidat', sourceKey: 'nomor_kandidat' });
-nilai_tambah.belongsTo(konversi, { foreignKey: 'nomor_kandidat', targetKey: 'nomor_kandidat' });
+konversi.hasMany(nilai_tambah, { 
+    foreignKey: 'nomor_kandidat', 
+    sourceKey: 'nomor_kandidat' 
+});
+
+nilai_tambah.belongsTo(konversi, { 
+    foreignKey: 'nomor_kandidat', 
+    targetKey: 'nomor_kandidat' 
+});
 
 module.exports = {
     konversi,
