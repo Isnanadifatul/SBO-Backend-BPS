@@ -5,7 +5,7 @@ const { connection } = require('../db-config/connect');
 //insert survey1
 async function insertSurveyHandler(request, h) {
   try {
-      const {nama_lengkap, nip, jenis_kelamin, umur, pendidikan, masa_kerja, nomor_kandidat, nama_kandidat,
+      const {triwulan, nama_lengkap, nip, jenis_kelamin, umur, pendidikan, masa_kerja, nomor_kandidat, nama_kandidat,
         pertanyaan_1, pertanyaan_2, pertanyaan_3, pertanyaan_4, pertanyaan_5, 
         pertanyaan_6, pertanyaan_7, pertanyaan_8, pertanyaan_9, pertanyaan_10,
         pertanyaan_11, pertanyaan_12, pertanyaan_13, pertanyaan_14, pertanyaan_15,
@@ -13,7 +13,7 @@ async function insertSurveyHandler(request, h) {
         pertanyaan_21} = request.payload;
 
       // Insert user baru
-      await insertUser(nama_lengkap, nip, jenis_kelamin, umur, pendidikan, masa_kerja, nomor_kandidat, nama_kandidat,
+      await insertUser(triwulan, nama_lengkap, nip, jenis_kelamin, umur, pendidikan, masa_kerja, nomor_kandidat, nama_kandidat,
         pertanyaan_1, pertanyaan_2, pertanyaan_3, pertanyaan_4, pertanyaan_5, 
         pertanyaan_6, pertanyaan_7, pertanyaan_8, pertanyaan_9, pertanyaan_10,
         pertanyaan_11, pertanyaan_12, pertanyaan_13, pertanyaan_14, pertanyaan_15,
@@ -32,6 +32,9 @@ async function insertSurveyHandler(request, h) {
     try {
         const result = await survey_pegawai_teladan.findAll({ 
           attributes: [
+          'tahun',
+          'triwulan',
+          'nomor_kandidat',
           'nama_kandidat',
                 [Sequelize.fn('AVG', Sequelize.col('pertanyaan_1')), 'pertanyaan_1'],
                 [Sequelize.fn('AVG', Sequelize.col('pertanyaan_2')), 'pertanyaan_2'],
@@ -55,7 +58,7 @@ async function insertSurveyHandler(request, h) {
                 [Sequelize.fn('AVG', Sequelize.col('pertanyaan_20')), 'pertanyaan_20'],
                 [Sequelize.fn('AVG', Sequelize.col('pertanyaan_21')), 'pertanyaan_21']
       ],
-      group: ['nomor_kandidat']
+      group: ['nomor_kandidat', 'tahun', 'triwulan']
   });
 
   if (result.length === 0) {
@@ -78,7 +81,9 @@ const AVGSurveyPerKandidat = async (request, h) => {
   try {
       const results = await survey_pegawai_teladan.findAll({
           attributes: [
-              'nama_kandidat',
+              'tahun',
+            'triwulan',
+          'nama_kandidat',
               [Sequelize.fn('AVG', Sequelize.literal(`
                   (pertanyaan_1 + pertanyaan_2 + pertanyaan_3 + pertanyaan_4 + pertanyaan_5 + 
                    pertanyaan_6 + pertanyaan_7 + pertanyaan_8 + pertanyaan_9 + pertanyaan_10 + 
@@ -87,7 +92,8 @@ const AVGSurveyPerKandidat = async (request, h) => {
                    pertanyaan_21) / 21
               `)), 'avg_total_hasil']
           ],
-          group: ['nomor_kandidat']
+          group: ['tahun','triwulan','nomor_kandidat'],
+          order: [['triwulan', 'DESC']]
       });
 
       if (results.length === 0) {
@@ -105,46 +111,47 @@ const AVGSurveyPerKandidat = async (request, h) => {
 const AVGConvert30 = async (request, h) => {
   try {
       const results = await survey_pegawai_teladan.findAll({
-        attributes: [
-            'nomor_kandidat',
-            'nama_kandidat',
-            [Sequelize.fn('ROUND', Sequelize.literal(`
-                AVG(
-                    (pertanyaan_1 + pertanyaan_2 + pertanyaan_3 + pertanyaan_4 + pertanyaan_5 + 
-                     pertanyaan_6 + pertanyaan_7 + pertanyaan_8 + pertanyaan_9 + pertanyaan_10 + 
-                     pertanyaan_11 + pertanyaan_12 + pertanyaan_13 + pertanyaan_14 + pertanyaan_15 + 
-                     pertanyaan_16 + pertanyaan_17 + pertanyaan_18 + pertanyaan_19 + pertanyaan_20 + 
-                     pertanyaan_21) / 21
-                )
-            `), 2), 'avg_total_hasil_30_percent']
-        ],
-        group: ['nomor_kandidat', 'nama_kandidat'],
-        raw: true
-    });
+          attributes: [
+              'tahun',
+              'triwulan',
+              'nomor_kandidat',
+              'nama_kandidat',
+              [Sequelize.fn('ROUND', Sequelize.literal(`
+                  AVG(
+                      (pertanyaan_1 + pertanyaan_2 + pertanyaan_3 + pertanyaan_4 + pertanyaan_5 + 
+                       pertanyaan_6 + pertanyaan_7 + pertanyaan_8 + pertanyaan_9 + pertanyaan_10 + 
+                       pertanyaan_11 + pertanyaan_12 + pertanyaan_13 + pertanyaan_14 + pertanyaan_15 + 
+                       pertanyaan_16 + pertanyaan_17 + pertanyaan_18 + pertanyaan_19 + pertanyaan_20 + 
+                       pertanyaan_21) / 21
+                  )
+              `), 2), 'avg_total_hasil_30_percent']
+          ],
+          group: ['tahun', 'triwulan', 'nomor_kandidat', 'nama_kandidat'],
+          raw: true,
+      });
 
-    if (results.length === 0) {
-        return h.response({ error: 'Data not found' }).code(404);
-    }
+      if (results.length === 0) {
+          return h.response({ error: 'Data not found' }).code(404);
+      }
 
-    for (const result of results) {
-        const avgTotal = result.avg_total_hasil_30_percent;
-        const nomorKandidat = result.nomor_kandidat;
-        const namaKandidat = result.nama_kandidat;
+      for (const result of results) {
+          const avgTotal = result.avg_total_hasil_30_percent;
+          const { tahun, triwulan, nomor_kandidat, nama_kandidat } = result;
 
-        console.log(`Menyimpan hasil untuk kandidat ${nomorKandidat}: ${avgTotal}`);
+          console.log(`Menyimpan hasil untuk kandidat ${nomor_kandidat}: ${avgTotal}`);
 
-        if (avgTotal !== undefined) {
-            await saveKonversi(nomorKandidat, namaKandidat, avgTotal);
-        } else {
-            console.warn(`Nilai untuk ${nomorKandidat} adalah undefined`);
-        }
-    }
+          if (avgTotal !== undefined) {
+              await saveKonversi(tahun, triwulan, nomor_kandidat, nama_kandidat, avgTotal);
+          } else {
+              console.warn(`Nilai untuk ${nomor_kandidat} adalah undefined`);
+          }
+      }
 
-    return h.response(results).code(200);
-} catch (err) {
-    console.error('Failed to fetch data:', err);
-    return h.response({ error: 'Failed to fetch data' }).code(500);
-}
+      return h.response(results).code(200);
+  } catch (err) {
+      console.error('Failed to fetch data:', err);
+      return h.response({ error: 'Failed to fetch data' }).code(500);
+  }
 };
 
 
@@ -153,6 +160,8 @@ const getSurveyKandidat1 = async (request, h) => {
   try {
       const results = await survey_pegawai_teladan.findAll({
         attributes: [
+          'tahun',
+          'triwulan',
           'nama_kandidat',
           'pertanyaan_1','pertanyaan_2','pertanyaan_3','pertanyaan_4','pertanyaan_5',
           'pertanyaan_6','pertanyaan_7','pertanyaan_8','pertanyaan_9','pertanyaan_10',
@@ -162,7 +171,9 @@ const getSurveyKandidat1 = async (request, h) => {
       ],
           where: {
             nomor_kandidat: 'Kandidat 1'
-          }
+          },
+          group: ['tahun','triwulan','nomor_kandidat'],
+          order: [['triwulan', 'DESC']]
       });
 
       if (results.length === 0) {
@@ -179,6 +190,8 @@ const getSurveyKandidat2 = async (request, h) => {
   try {
       const results = await survey_pegawai_teladan.findAll({
         attributes: [
+          'tahun',
+          'triwulan',
           'nama_kandidat',
           'pertanyaan_1','pertanyaan_2','pertanyaan_3','pertanyaan_4','pertanyaan_5',
           'pertanyaan_6','pertanyaan_7','pertanyaan_8','pertanyaan_9','pertanyaan_10',
@@ -188,8 +201,10 @@ const getSurveyKandidat2 = async (request, h) => {
       ],
           where: {
             nomor_kandidat: 'Kandidat 2'
-          }
-      });
+          },
+          group: ['tahun','triwulan','nomor_kandidat'],
+          order: [['triwulan', 'DESC']]
+        });
 
       if (results.length === 0) {
           return h.response({ error: 'Data not found' }).code(404);
@@ -206,6 +221,8 @@ const getSurveyKandidat3 = async (request, h) => {
   try {
       const results = await survey_pegawai_teladan.findAll({
         attributes: [
+          'tahun',
+          'triwulan',
           'nama_kandidat',
           'pertanyaan_1','pertanyaan_2','pertanyaan_3','pertanyaan_4','pertanyaan_5',
           'pertanyaan_6','pertanyaan_7','pertanyaan_8','pertanyaan_9','pertanyaan_10',
@@ -215,7 +232,9 @@ const getSurveyKandidat3 = async (request, h) => {
       ],
           where: {
             nomor_kandidat: 'Kandidat 3'
-          }
+          },
+          group: ['tahun','triwulan','nomor_kandidat'],
+          order: [['triwulan', 'DESC']]
       });
 
       if (results.length === 0) {
