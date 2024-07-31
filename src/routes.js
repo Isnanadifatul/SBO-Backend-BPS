@@ -25,7 +25,7 @@ const { getNilaiById, insertNilaiTambah, readNilai, updateNilai, deleteNilai} = 
 const {getCombinedScores} = require('./handler_result');
 const kandidat_handler= require('./kandidat_handler');
 //gap analisis sbo
-const {getHasilSurveyPriKer} = require('./handler_gap_analisis')
+const {getHasilSurveyPriker, getHasilSurveyLeadbo, getHasilSurveyPebo, getHasilSurveySysbo} = require('./handler_gap_analisis')
 const routes = [
     //Memilih kandidat
     {
@@ -586,14 +586,37 @@ const routes = [
     //menampilkan gap analisis pada tabel
     {
         method: 'GET',
-        path: '/gap-survey-priker',
-        handler: getHasilSurveyPriKer,
+        path: '/gap-survey-priker/{tahun}/{triwulan}',
+        handler: getHasilSurveyPriker,
+        options: {
+            auth: false
+        }
+    },
+    {
+        method: 'GET',
+        path: '/gap-survey-leadbo/{tahun}/{triwulan}',
+        handler: getHasilSurveyLeadbo,
+        options: {
+            auth: false
+        }
+    },
+    {
+        method: 'GET',
+        path: '/gap-survey-pebo/{tahun}/{triwulan}',
+        handler: getHasilSurveyPebo,
+        options: {
+            auth: false
+        }
+    },
+    {
+        method: 'GET',
+        path: '/gap-survey-sysbo/{tahun}/{triwulan}',
+        handler: getHasilSurveySysbo,
         options: {
             auth: false
         }
     }
-
-
 ];
+
 
 module.exports = routes;

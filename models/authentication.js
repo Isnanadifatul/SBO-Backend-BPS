@@ -35,7 +35,7 @@ const Authentication = dbConnection.define('Authentication', {
   freezeTableName: true,
   timestamps: false
 });
-/*
+
 // Sinkronisasi Model dengan Database
 dbConnection.sync({ alter: true })
   .then(() => {
@@ -44,7 +44,7 @@ dbConnection.sync({ alter: true })
   .catch((error) => {
     console.error('Unable to create table : ', error);
   });
-*/
+
 // Insert Authentication
 const insertUser = async (role, hashedPassword, confirmasi_password, nip) => {
   try {

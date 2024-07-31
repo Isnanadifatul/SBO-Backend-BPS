@@ -137,11 +137,11 @@ const hasil_survey_sysbo = dbConnection.define('hasil_survey_sysbo', {
   timestamps: false
 });
 
-/*
-hasil_survey_priker.belongsTo(pertanyaan_perilaku, { foreignKey: 'id_pertanyaan' });
-hasil_survey_leadbo.belongsTo(pertanyaan_lead, { foreignKey: 'id_pertanyaan' });
-hasil_survey_pebo.belongsTo(pertanyaan_peop, { foreignKey: 'id_pertanyaan' });
-hasil_survey_sysbo.belongsTo(pertanyaan_sys, { foreignKey: 'id_pertanyaan' });
 
-*/
+// Definisikan relasi antara tabel hasil survei dan tabel pertanyaan dengan alias yang unik
+hasil_survey_priker.belongsTo(pertanyaan_perilaku, { foreignKey: 'id_pertanyaan', as: 'pertanyaan_priker' });
+hasil_survey_leadbo.belongsTo(pertanyaan_lead, { foreignKey: 'id_pertanyaan', as: 'pertanyaan_lead' });
+hasil_survey_pebo.belongsTo(pertanyaan_peop, { foreignKey: 'id_pertanyaan', as: 'pertanyaan_peop' });
+hasil_survey_sysbo.belongsTo(pertanyaan_sys, { foreignKey: 'id_pertanyaan', as: 'pertanyaan_sys' });
+
 module.exports = {hasil_survey_priker, hasil_survey_leadbo, hasil_survey_pebo, hasil_survey_sysbo};
