@@ -2,11 +2,11 @@ const {Sequelize} = require('sequelize');
 
 // database connection
 const connection = new Sequelize(
-  'u628390983_sbo',
-  'u628390983_sbo',
-  'SboBps2024',
+  'sbo',
+  'root',
+  '',
   {
-    host: 'peachpuff-tiger-800636.hostingersite.com',
+    host: 'localhost',
     port: 3306,
     dialect: 'mysql',
   },

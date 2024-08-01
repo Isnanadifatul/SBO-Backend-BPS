@@ -19,6 +19,10 @@ const {createAuthentication, loginHandler, logoutHandler, updateAuthenticationHa
 const kandidat_handler= require('./kandidat_handler');
 const {getCombinedScores} = require('./handler_result');
 const {searchHandler} = require('./search_handler');
+//gap analisis sbo
+const {getHasilSurveyPriker, getHasilSurveyLeadbo, getHasilSurveyPebo, getHasilSurveySysbo} = require('./handler_gap_analisis')
+//isi// survey SBO
+const {isiSurveyHandler, getAverageScoresHandler, getSurveyDataByLabelYearAndQuarter} = require('./handler_survey_sbo');
 
 
 const routes = [
@@ -457,70 +461,133 @@ const routes = [
         path: '/dasar_hukum_delete/{id}',
         handler: deleteDhHandler
     },
-     //pegawai
-     {
-        method: 'POST',
-        path: '/createPegawai',
-        handler: createPegawai,
+    //pegawai
+    {
+       method: 'POST',
+       path: '/createPegawai',
+       handler: createPegawai,
+       options: {
+           auth: false
+       }
+   },
+   {
+       method: 'GET',
+       path: '/readPegawai',
+       handler: readAllPegawai,
+       options: {
+           auth: false
+       }
+   },
+   {
+       method:'GET',
+       path: '/readPegawaiByID/{id}',
+       handler: getPegawaiByIdhandler,
+   },
+   {
+       method: 'PUT',
+       path: '/updatePegawai/{id}',
+       handler: updatePegawaiHandler,
+   },
+   {
+       method: 'DELETE',
+       path: '/deletePegawai/{id}',
+       handler: deletePegawaiHandler,
+   },
+  //Authentication
+   {
+       method: 'POST',
+       path: '/login',
+       handler: loginHandler,
+       options: {
+           auth: false
+       }
+   },
+   {
+       method: 'POST',
+       path: '/createAuth',
+       handler: createAuthentication,
+       options: {
+           auth: false
+       }
+   },
+   {
+       method: 'PUT',
+       path: '/updateAuth/{id}',
+       handler: updateAuthenticationHandler,
+   },
+   {
+       method: 'POST',
+       path: '/logout',
+       handler: logoutHandler,
+   },
+   {
+       method: 'GET',
+       path: '/protected',
+       options: {
+         auth: 'jwt', // Require JWT authentication
+         handler: (request, h) => {
+           return h.response({ message: 'You have accessed a protected route' });
+         }
+       }
+   },
+   //Isi survey SBO
+   {
+       method: 'POST',
+       path: '/isiSurvey',
+       handler: isiSurveyHandler,
+       options: {
+           auth: false
+       }
+   },
+    //menghitung rata-rata
+    {
+        method: 'GET',
+        path: '/average-scores/{label}/{triwulan}/{tahun}',
+        handler: getAverageScoresHandler,
+        options: {
+            auth: false
+        }
+    },
+    //menampilkan pada kartesius
+    {
+        method: 'GET',
+        path: '/kartesius/{label}/{tahun}/{triwulan}',
+        handler: getSurveyDataByLabelYearAndQuarter,
+        options: {
+            auth: false
+        }
+    },
+    //menampilkan gap analisis pada tabel
+    {
+        method: 'GET',
+        path: '/gap-survey-priker/{tahun}/{triwulan}',
+        handler: getHasilSurveyPriker,
+        options: {
+            auth: false
+        }
     },
     {
         method: 'GET',
-        path: '/readPegawai',
-        handler: readAllPegawai,
+        path: '/gap-survey-leadbo/{tahun}/{triwulan}',
+        handler: getHasilSurveyLeadbo,
         options: {
             auth: false
         }
-    },
-    {
-        method:'GET',
-        path: '/readPegawaiByID/{id}',
-        handler: getPegawaiByIdhandler,
-    },
-    {
-        method: 'PUT',
-        path: '/updatePegawai/{id}',
-        handler: updatePegawaiHandler,
-    },
-    {
-        method: 'DELETE',
-        path: '/deletePegawai/{id}',
-        handler: deletePegawaiHandler,
-    },
-   //Authentication
-    {
-        method: 'POST',
-        path: '/login',
-        handler: loginHandler,
-        options: {
-            auth: false
-        }
-    },
-    {
-        method: 'POST',
-        path: '/createAuth',
-        handler: createAuthentication,
-        options: {
-            auth: false
-        }
-    },
-    {
-        method: 'PUT',
-        path: '/updateAuth/{id}',
-        handler: updateAuthenticationHandler,
-    },
-    {
-        method: 'POST',
-        path: '/logout',
-        handler: logoutHandler,
     },
     {
         method: 'GET',
-        path: '/protected',
+        path: '/gap-survey-pebo/{tahun}/{triwulan}',
+        handler: getHasilSurveyPebo,
         options: {
-          auth: 'jwt', // Require JWT authentication
-          handler: (request, h) => {
-            return h.response({ message: 'You have accessed a protected route' });
-          }
+            auth: false
+        }
+    },
+    {
+        method: 'GET',
+        path: '/gap-survey-sysbo/{tahun}/{triwulan}',
+        handler: getHasilSurveySysbo,
+        options: {
+            auth: false
         }
     } 
 ];
