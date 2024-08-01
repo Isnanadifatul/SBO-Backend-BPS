@@ -58,7 +58,7 @@ async function insertSurveyHandler(request, h) {
                 [Sequelize.fn('AVG', Sequelize.col('pertanyaan_20')), 'pertanyaan_20'],
                 [Sequelize.fn('AVG', Sequelize.col('pertanyaan_21')), 'pertanyaan_21']
       ],
-      group: ['nomor_kandidat', 'tahun', 'triwulan']
+      group: ['tahun', 'triwulan', 'nomor_kandidat']
   });
 
   if (result.length === 0) {
@@ -170,7 +170,7 @@ const getSurveyKandidat1 = async (request, h) => {
           'pertanyaan_21'
         ],
         where: {
-          nomor_kandidat: 'Kandidat 2'
+          nomor_kandidat: 'Kandidat 1'
         },
         order: [
           ['tahun', 'DESC'],
@@ -235,7 +235,7 @@ const getSurveyKandidat3 = async (request, h) => {
           'pertanyaan_21'
         ],
         where: {
-          nomor_kandidat: 'Kandidat 2'
+          nomor_kandidat: 'Kandidat 3'
         },
         order: [
           ['tahun', 'DESC'],
