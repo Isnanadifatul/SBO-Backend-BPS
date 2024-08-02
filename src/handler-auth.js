@@ -73,10 +73,10 @@ const updateAuthenticationHandler = async (request, h) => {
 //handler login
 const loginHandler = async (request, h) => {
   try {
-    const { nip, password } = request.payload;
+    const { nip, password, role} = request.payload;
 
     // Log request payload for debugging
-    console.log('Login request payload:', { nip, password });
+    console.log('Login request payload:', { nip, password, role });
 
     const user = await Authentication.findOne({ where: { nip } });
 
@@ -111,6 +111,14 @@ const loginHandler = async (request, h) => {
       { expiresIn: '24h' } // Token expiry time
     );
 
+    const userRole = await Authentication.findOne({ where: { role } });
+
+    if(userRole){
+      console.log('Role is Correct');
+    }else{
+      console.log('Role is not Correct');
+      return h.response('Role is incorrect').code(401);
+    }
     //Mengambil date pegawai yang berelasi
     const pegawai = await Pegawai.findOne({
       where: {nip},

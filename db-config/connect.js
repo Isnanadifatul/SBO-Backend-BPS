@@ -15,7 +15,7 @@ const connection = new Sequelize(
 if(!connection) {
   console.log("Error")
 } else{
-  console.log("COnnect")
+  console.log("Connect")
 }
 
 module.exports.connect = connection;

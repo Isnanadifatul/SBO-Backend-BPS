@@ -6,10 +6,17 @@ const { pertanyaan_sys } = require('../models/pertanyaan_system');
 const { konversi } = require('../models/karyawan_teladan');
 
 const calculateGap = (data, alias) => {
-    return data.map(item => {
+    let totalX = 0;
+    let totalY = 0;
+
+    const result = data.map(item => {
         const gap = parseFloat(item.y) - parseFloat(item.x);
         const konversi = (gap / 4) * 100;
         const indikator = item[alias] ? item[alias].label : 'N/A';
+
+        totalX += parseFloat(item.x);
+        totalY += parseFloat(item.y);
+
         return {
             indikator,
             x: item.x,
@@ -20,6 +27,7 @@ const calculateGap = (data, alias) => {
             konversi: konversi.toFixed(2)
         };
     });
+    return {result, totalX: totalX.toFixed(2), totalY: totalY.toFixed(2)};
 };
 
 const getHasilSurveyPriker = async (request, h) => {
@@ -30,8 +38,8 @@ const getHasilSurveyPriker = async (request, h) => {
             where: { tahun, triwulan },
             include: [{ model: pertanyaan_perilaku, as: 'pertanyaan_priker' }]
         });
-        const result = calculateGap(hasilSurvey, 'pertanyaan_priker');
-        return h.response(result);
+        const {result, totalX, totalY} = calculateGap(hasilSurvey, 'pertanyaan_priker');
+        return h.response({data: result, totalX, totalY});
     } catch (error) {
         console.error('Error fetching data:', error);
         return h.response({ error: 'Failed to fetch data' }).code(500);
@@ -46,8 +54,8 @@ const getHasilSurveyLeadbo = async (request, h) => {
             where: { tahun, triwulan },
             include: [{ model: pertanyaan_lead, as: 'pertanyaan_lead' }]
         });
-        const result = calculateGap(hasilSurvey, 'pertanyaan_lead');
-        return h.response(result);
+        const {result, totalX, totalY} = calculateGap(hasilSurvey, 'pertanyaan_lead');
+        return h.response({data: result, totalX, totalY});
     } catch (error) {
         console.error('Error fetching data:', error);
         return h.response({ error: 'Failed to fetch data' }).code(500);
@@ -62,8 +70,8 @@ const getHasilSurveyPebo = async (request, h) => {
             where: { tahun, triwulan },
             include: [{ model: pertanyaan_peop, as: 'pertanyaan_peop' }]
         });
-        const result = calculateGap(hasilSurvey, 'pertanyaan_peop');
-        return h.response(result);
+        const {result, totalX, totalY} = calculateGap(hasilSurvey, 'pertanyaan_peop');
+        return h.response({data: result, totalX, totalY});
     } catch (error) {
         console.error('Error fetching data:', error);
         return h.response({ error: 'Failed to fetch data' }).code(500);
@@ -78,8 +86,8 @@ const getHasilSurveySysbo = async (request, h) => {
             where: { tahun, triwulan },
             include: [{ model: pertanyaan_sys, as: 'pertanyaan_sys' }]
         });
-        const result = calculateGap(hasilSurvey, 'pertanyaan_sys');
-        return h.response(result);
+        const {result, totalX, totalY} = calculateGap(hasilSurvey, 'pertanyaan_sys');
+        return h.response({data: result, totalX, totalY});
     } catch (error) {
         console.error('Error fetching data:', error);
         return h.response({ error: 'Failed to fetch data' }).code(500);
