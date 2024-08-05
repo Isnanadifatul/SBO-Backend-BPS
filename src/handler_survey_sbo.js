@@ -213,18 +213,7 @@ const getNumQuestionsByLabel = (label) => {
       throw new Error('Invalid label');
   }
 };
-/*
-//read all
-const getSurveyPriker = async (request, h) => {
-  try {
-    const surveys = await hasil_survey_priker.findAll();
-    return h.response(surveys).code(200);
-  } catch (error) {
-    console.error(error);
-    return h.response('Error fetching data').code(500);
-  }
-};
-*/
+
 // mengecek apabila triwulan ada pada table
 const checkTriwulanExists = async (Model, tahun, triwulan) => {
   const existingEntry = await Model.findOne({
