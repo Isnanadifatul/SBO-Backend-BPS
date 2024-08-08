@@ -2,7 +2,7 @@ const {Sequelize} = require('sequelize');
 
 // database connection
 const connection = new Sequelize(
-  'sbo2',
+  'sbo',
   'root',
   '',
   {

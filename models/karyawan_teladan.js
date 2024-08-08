@@ -8,6 +8,13 @@ const dbConnection = new Sequelize('sbo', 'root', '', {
     dialect: 'mysql'
 });
 
+const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root', // Ganti dengan user database Anda
+    password: '', // Ganti dengan password database Anda
+    database: 'sbo'
+});
+
 const survey_pegawai_teladan = dbConnection.define('survey_pegawai_teladan', {
     
     id_survey_p:{
@@ -195,6 +202,7 @@ const saveKonversi = async (tahun, triwulan, nomor_kandidat, nama_kandidat, avg_
 module.exports = {  survey_pegawai_teladan,
                     insertUser, 
                     dbConnection,
+                    pool,
                     konversi,
                     saveKonversi
                     };

@@ -1,5 +1,5 @@
 const {Sequelize} = require('sequelize');
-const { survey_pegawai_teladan, insertUser, dbConnection, konversi, saveKonversi} = require('../models/karyawan_teladan');
+const { survey_pegawai_teladan, insertUser, dbConnection,pool, konversi, saveKonversi} = require('../models/karyawan_teladan');
 const { connection } = require('../db-config/connect');
 
 //insert survey1
@@ -30,51 +30,66 @@ async function insertSurveyHandler(request, h) {
   //get data hasil survey
   const totalSurveyHandler = async (request, h) => {
     try {
-        const result = await survey_pegawai_teladan.findAll({ 
-          attributes: [
-          'tahun',
-          'triwulan',
-          'nomor_kandidat',
-          'nama_kandidat',
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_1')), 'pertanyaan_1'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_2')), 'pertanyaan_2'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_3')), 'pertanyaan_3'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_4')), 'pertanyaan_4'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_5')), 'pertanyaan_5'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_6')), 'pertanyaan_6'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_7')), 'pertanyaan_7'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_8')), 'pertanyaan_8'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_9')), 'pertanyaan_9'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_10')), 'pertanyaan_10'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_11')), 'pertanyaan_11'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_12')), 'pertanyaan_12'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_13')), 'pertanyaan_13'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_14')), 'pertanyaan_14'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_15')), 'pertanyaan_15'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_16')), 'pertanyaan_16'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_17')), 'pertanyaan_17'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_18')), 'pertanyaan_18'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_19')), 'pertanyaan_19'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_20')), 'pertanyaan_20'],
-                [Sequelize.fn('AVG', Sequelize.col('pertanyaan_21')), 'pertanyaan_21']
-      ],
-      group: ['tahun', 'triwulan', 'nomor_kandidat']
-  });
+        const { tahun, triwulan, nomor_kandidat } = request.query;
 
-  if (result.length === 0) {
-      return h.response({ error: 'Kandidat not found' }).code(404);
-  }
+        // Validasi parameter tahun
+        if (!tahun) {
+            return h.response({ error: 'Parameter tahun diperlukan' }).code(400);
+        }
 
-  return h.response(result).code(200);
+        // Membuat query SQL dinamis
+        let query = `SELECT 
+                        tahun, 
+                        triwulan, 
+                        nomor_kandidat, 
+                        nama_kandidat,
+                        AVG(pertanyaan_1) AS pertanyaan_1,
+                        AVG(pertanyaan_2) AS pertanyaan_2,
+                        AVG(pertanyaan_3) AS pertanyaan_3,
+                        AVG(pertanyaan_4) AS pertanyaan_4,
+                        AVG(pertanyaan_5) AS pertanyaan_5,
+                        AVG(pertanyaan_6) AS pertanyaan_6,
+                        AVG(pertanyaan_7) AS pertanyaan_7,
+                        AVG(pertanyaan_8) AS pertanyaan_8,
+                        AVG(pertanyaan_9) AS pertanyaan_9,
+                        AVG(pertanyaan_10) AS pertanyaan_10,
+                        AVG(pertanyaan_11) AS pertanyaan_11,
+                        AVG(pertanyaan_12) AS pertanyaan_12,
+                        AVG(pertanyaan_13) AS pertanyaan_13,
+                        AVG(pertanyaan_14) AS pertanyaan_14,
+                        AVG(pertanyaan_15) AS pertanyaan_15,
+                        AVG(pertanyaan_16) AS pertanyaan_16,
+                        AVG(pertanyaan_17) AS pertanyaan_17,
+                        AVG(pertanyaan_18) AS pertanyaan_18,
+                        AVG(pertanyaan_19) AS pertanyaan_19,
+                        AVG(pertanyaan_20) AS pertanyaan_20,
+                        AVG(pertanyaan_21) AS pertanyaan_21
+                    FROM survey_pegawai_teladan
+                    WHERE tahun LIKE ?`;
 
-  
+        const params = [`%${tahun}%`];
 
+        if (triwulan) {
+            query += ' AND triwulan = ?';
+            params.push(triwulan);
+        }
 
-} catch (err) {
-  console.error(err);
-  return h.response({ error: 'Error Guysssss' }).code(500);
-}
+        if (nomor_kandidat) {
+            query += ' AND nomor_kandidat = ?';
+            params.push(nomor_kandidat);
+        }
+
+        query += ' GROUP BY tahun, triwulan, nomor_kandidat';
+
+        const [rows] = await pool.execute(query, params);
+
+        return h.response(rows).code(200);
+    } catch (error) {
+        console.error(error);
+        return h.response({ error: 'Terjadi kesalahan saat mengambil data' }).code(500);
+    }
 };
+
 
 //get rata rata skor
 const AVGSurveyPerKandidat = async (request, h) => {
