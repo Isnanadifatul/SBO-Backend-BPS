@@ -3,6 +3,8 @@ const JWT = require('jsonwebtoken');
 const Joi = require('joi');
 const { updateAuthenticationById, Authentication } = require('../models/authentication');
 const { Pegawai } = require('../models/pegawai');
+const { where } = require('sequelize');
+const { error } = require('@hapi/joi/lib/base');
 
 // Fungsi untuk memeriksa apakah nip sudah ada
 async function isUsernameExist(nip) {
@@ -49,7 +51,40 @@ async function createAuthentication(request, h) {
     console.error('Error during registration:', error);
     return h.response('Internal Server Error').code(500);
   }
-}
+};
+
+// Asosiasi dengan Pegawai
+Authentication.belongsTo(Pegawai, { foreignKey: 'nip', targetKey: 'nip' });
+// Asosiasi dengan Authentication
+Pegawai.hasMany(Authentication, { foreignKey: 'nip', sourceKey: 'nip' });
+
+//read all akun 
+
+const getAuth = async (request, h) => {
+  try {
+    // Ambil data autentikasi dan pegawai
+    const data = await Authentication.findAll({
+      attributes: ['nip', 'confirmasi_password', 'role'], // Ambil atribut yang diinginkan dari Authentication
+      include: [{
+        model: Pegawai,
+        attributes: ['nama'], // Ambil atribut 'nama' dari Pegawai
+      }]
+    });
+
+    // Format data untuk hasil akhir
+    const result = data.map(auth => ({
+      nip: auth.nip,
+      nama: auth.Pegawai.nama,
+      confirmasi_password: auth.confirmasi_password,
+      role: auth.role
+    }));
+
+    return h.response(result);
+  } catch (error) {
+    console.error(error);
+    return h.response('Terjadi kesalahan saat mengambil data').code(500);
+  }
+};
 
 const updateAuthenticationHandler = async (request, h) => {
   try {
@@ -167,4 +202,4 @@ const logoutHandler = (request, h) => {
   }
 };
 
-module.exports = { createAuthentication, updateAuthenticationHandler, loginHandler, logoutHandler };
+module.exports = { createAuthentication, updateAuthenticationHandler, loginHandler, logoutHandler ,getAuth};

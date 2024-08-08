@@ -15,14 +15,15 @@ const { insertSurveyHandler, totalSurveyHandler, getSurveyKandidat1, getSurveyKa
         } = require('./handler_karyawan_teladan');
 const {createPegawai, readAllPegawai, getPegawaiByIdhandler, updatePegawaiHandler, deletePegawaiHandler} = require('./handler-pegawai');
 const { getNilaiById, insertNilaiTambah, readNilai, updateNilai, deleteNilai} = require('./nilai_tambah_handler');
-const {createAuthentication, loginHandler, logoutHandler, updateAuthenticationHandler} = require('./handler-auth');
+//authentication
+const {createAuthentication, loginHandler, logoutHandler, updateAuthenticationHandler, getAuth} = require('./handler-auth');
 const kandidat_handler= require('./kandidat_handler');
 const {getCombinedScores} = require('./handler_result');
 const {searchHandler} = require('./search_handler');
 //gap analisis sbo
 const {getHasilSurveyPriker, getHasilSurveyLeadbo, getHasilSurveyPebo, getHasilSurveySysbo} = require('./handler_gap_analisis')
-//isi// survey SBO
-const {isiSurveyHandler, getAverageScoresHandler, getSurveyDataByLabelYearAndQuarter} = require('./handler_survey_sbo');
+//isi survey SBO
+const {isiSurveyHandler, getSurvey, getAverageScoresHandler, getSurveyDataByLabelYearAndQuarter} = require('./handler_survey_sbo');
 
 
 const routes = [
@@ -530,6 +531,11 @@ const routes = [
          }
        }
    },
+   {
+        method: 'GET',
+        path: '/read-authentication',
+        handler: getAuth,
+   },
    //Isi survey SBO
    {
        method: 'POST',
@@ -539,7 +545,13 @@ const routes = [
            auth: false
        }
    },
-    //menghitung rata-rata
+   //read all data responded survey sbo
+   {
+    method: 'GET',
+    path: '/responded-survey/{tahun}/{triwulan}',
+    handler: getSurvey,
+   },
+   //menghitung rata-rata
     {
         method: 'GET',
         path: '/average-scores/{label}/{triwulan}/{tahun}',
