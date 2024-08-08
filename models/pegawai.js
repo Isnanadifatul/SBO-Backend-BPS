@@ -1,7 +1,6 @@
 const connection = require('../db-config/connect');
 const {DataTypes} = require('sequelize');
 const mysql = require('mysql2/promise');
-
 const dbConnection = connection.connect;
 
 // create database using models

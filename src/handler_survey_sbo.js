@@ -54,6 +54,41 @@ const isiSurveyHandler = async (request, h) => {
     }
 };
 
+//read all
+const getSurvey = async (request, h) => {
+  const {tahun, triwulan} = request.params;
+
+  try { 
+    const surveys = await survey_budaya_organisasi.findAll({
+      attributes: ['nama', 'label', 'score_harapan', 'score_kinerja'],
+      where: {
+        tahun: tahun,
+        triwulan: triwulan
+      }
+    });
+
+    //hitung jumlah responded
+    const respondedCount = await survey_budaya_organisasi.count({
+      distinct: true,
+      col: 'nama',
+      where: {
+        tahun: tahun,
+        triwulan: triwulan
+      }
+    });
+
+    const response = {
+      respondedCount: respondedCount,
+      surveys: surveys
+    };
+
+    return h.response(response).code(200);
+  } catch (error) {
+    console.error(error);
+    return h.response('Error fetching data').code(500);
+  }
+};
+
 // fungsi untuk menghitung triwulan
 const calculateTriwulan = async (label, year) => {
   const lastEntry = await survey_budaya_organisasi.findOne({
@@ -213,18 +248,7 @@ const getNumQuestionsByLabel = (label) => {
       throw new Error('Invalid label');
   }
 };
-/*
-//read all
-const getSurveyPriker = async (request, h) => {
-  try {
-    const surveys = await hasil_survey_priker.findAll();
-    return h.response(surveys).code(200);
-  } catch (error) {
-    console.error(error);
-    return h.response('Error fetching data').code(500);
-  }
-};
-*/
+
 // mengecek apabila triwulan ada pada table
 const checkTriwulanExists = async (Model, tahun, triwulan) => {
   const existingEntry = await Model.findOne({
@@ -304,4 +328,4 @@ const getSurveyDataByLabelYearAndQuarter = async (request, h) => {
   }
 };
 
-module.exports = { isiSurveyHandler, getAverageScoresHandler, getAverageScoresHandler, calculateAverageScores, getSurveyDataByLabelYearAndQuarter };
+module.exports = { isiSurveyHandler, getSurvey, getAverageScoresHandler, getAverageScoresHandler, calculateAverageScores, getSurveyDataByLabelYearAndQuarter };

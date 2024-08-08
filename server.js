@@ -63,8 +63,7 @@ server.views({
     server.route(routes);
 
     await server.start();
-    console.log(`S
-    erver started on: ${server.info.uri}`);
+    console.log(`Server started on: ${server.info.uri}`);
 };
 
 process.on('unhandledRejection', (err) => {
