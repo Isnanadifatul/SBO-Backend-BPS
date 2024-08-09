@@ -3,10 +3,16 @@ const mysql = require('mysql2/promise');
 
 const { Sequelize, DataTypes } = require('sequelize');
 
-const dbConnection = new Sequelize('sbo', 'root', '', {
-    host: 'localhost',
-    dialect: 'mysql'
-});
+const dbConnection = new Sequelize(
+    'umkmpal1_aang',
+    'umkmpal1_aang',
+    'Aang2024_',
+    {
+      host: 'umkmpalangan.my.id',
+      port: 3306,
+      dialect: 'mysql',
+    },
+  );
 
 const pemenangSPT = dbConnection.define('pemenang_survey_pegawai_teladan', {
     id: {

@@ -1,10 +1,10 @@
 const mysql = require('mysql2/promise');
 
 const connection = mysql.createPool({
-    host: 'localhost',
-    user: 'root', // Ganti dengan user database Anda
-    password: '', // Ganti dengan password database Anda
-    database: 'sbo'
+    host: 'umkmpalangan.my.id',
+    user: 'umkmpal1_aang', // Ganti dengan user database Anda
+    password: 'Aang2024_', // Ganti dengan password database Anda
+    database: 'umkmpal1_aang'
 });
 
 
