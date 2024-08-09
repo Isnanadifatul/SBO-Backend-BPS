@@ -68,7 +68,7 @@ async function updateAuthenticationById(id, newData) {
 
     // Lakukan update
     const result = await Authentication.update(newData, {
-      where: { id_auth: id },
+      where: { nip: id },
     });
 
     if (result[0] > 0) {
