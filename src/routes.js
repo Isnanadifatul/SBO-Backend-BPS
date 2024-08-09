@@ -10,7 +10,7 @@ const { getUserByIdPertanyaanLead, createPertanyaanLeadHandler, readAllPertanyaa
 const { getUserByIdPertanyaanSys, createPertanyaanSysHandler, readAllPertanyaanSys, updatePertanyaanSysHandler, deletePertanyaanSysHandler} = require('./handler_pertanyaan_system');
 const { getUserByIdPertanyaanPeople, createPertanyaanPeopleHandler, readAllPertanyaanPeople, updatePertanyaanPeopleHandler, deletePertanyaanPeopleHandler} = require('./handler_pertanyaan_people');
 const { getUserByIdPertanyaanPerilaku, createPertanyaanPerilakuHandler, readAllPertanyaanPerilaku, updatePertanyaanPerilakuHandler, deletePertanyaanPerilakuHandler} = require('./handler_pertanyaan_perilaku');
-const { insertSurveyHandler, totalSurveyHandler, getSurveyKandidat1, getSurveyKandidat2, getSurveyKandidat3,
+const { insertSurveyHandler, totalSurveyHandler, getSurveyKandidat,
         AVGSurveyPerKandidat, AVGConvert30
         } = require('./handler_karyawan_teladan');
 const {createPegawai, readAllPegawai, getPegawaiByIdhandler, updatePegawaiHandler, deletePegawaiHandler} = require('./handler-pegawai');
@@ -124,18 +124,8 @@ const routes = [
     },
     {
         method: 'GET',
-        path: '/survey_kandidat1',
-        handler: getSurveyKandidat1
-    },
-    {
-        method: 'GET',
-        path: '/survey_kandidat2',
-        handler: getSurveyKandidat2
-    },
-    {
-        method: 'GET',
-        path: '/survey_kandidat3',
-        handler: getSurveyKandidat3
+        path: '/survey_kandidat',
+        handler: getSurveyKandidat
     },
     
     //Pertanyaan People

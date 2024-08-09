@@ -3,16 +3,22 @@ const mysql = require('mysql2/promise');
 
 const { Sequelize, DataTypes } = require('sequelize');
 
-const dbConnection = new Sequelize('sbo', 'root', '', {
-    host: 'localhost',
-    dialect: 'mysql'
-});
+const dbConnection = new Sequelize(
+    'umkmpal1_aang',
+    'umkmpal1_aang',
+    'Aang2024_',
+    {
+      host: 'umkmpalangan.my.id',
+      port: 3306,
+      dialect: 'mysql',
+    },
+  );
 
 const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root', // Ganti dengan user database Anda
-    password: '', // Ganti dengan password database Anda
-    database: 'sbo'
+    host: 'umkmpalangan.my.id',
+    user: 'umkmpal1_aang', // Ganti dengan user database Anda
+    password: 'Aang2024_', // Ganti dengan password database Anda
+    database: 'umkmpal1_aang'
 });
 
 const survey_pegawai_teladan = dbConnection.define('survey_pegawai_teladan', {

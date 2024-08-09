@@ -2,11 +2,11 @@ const {Sequelize} = require('sequelize');
 
 // database connection
 const connection = new Sequelize(
-  'sbo',
-  'root',
-  '',
+  'umkmpal1_aang',
+  'umkmpal1_aang',
+  'Aang2024_',
   {
-    host: 'localhost',
+    host: 'umkmpalangan.my.id',
     port: 3306,
     dialect: 'mysql',
   },
