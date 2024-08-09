@@ -96,6 +96,8 @@ const AVGSurveyPerKandidat = async (request, h) => {
   try {
       const results = await survey_pegawai_teladan.findAll({
           attributes: [
+            "nama_lengkap",
+            "nip",
               'tahun',
             'triwulan',
           'nama_kandidat',
@@ -171,110 +173,69 @@ const AVGConvert30 = async (request, h) => {
 
 
 
-const getSurveyKandidat1 = async (request, h) => {
+const getSurveyKandidat = async (request, h) => {
   try {
-      const results = await survey_pegawai_teladan.findAll({
-        attributes: [
-          'tahun',
-          'triwulan',
-          'nama_kandidat',
-          'pertanyaan_1', 'pertanyaan_2', 'pertanyaan_3', 'pertanyaan_4', 'pertanyaan_5',
-          'pertanyaan_6', 'pertanyaan_7', 'pertanyaan_8', 'pertanyaan_9', 'pertanyaan_10',
-          'pertanyaan_11', 'pertanyaan_12', 'pertanyaan_13', 'pertanyaan_14', 'pertanyaan_15',
-          'pertanyaan_16', 'pertanyaan_17', 'pertanyaan_18', 'pertanyaan_19', 'pertanyaan_20',
-          'pertanyaan_21'
-        ],
-        where: {
-          nomor_kandidat: 'Kandidat 1'
-        },
-        order: [
-          ['tahun', 'DESC'],
-          ['triwulan', 'DESC']
-        ]
-      });
+      const { tahun, triwulan, nomor_kandidat } = request.query;
 
-      if (results.length === 0) {
-          return h.response({ error: 'Data not found' }).code(404);
+      // Validasi parameter tahun
+      if (!tahun) {
+        return h.response({ error: 'Parameter tahun diperlukan' }).code(400);
       }
 
-      return h.response(results).code(200);
-  } catch (err) {
-      console.error(err);
-      return h.response({ error: 'Failed to fetch data' }).code(500);
-  }
-};
-const getSurveyKandidat2 = async (request, h) => {
-  try {
-      const results = await survey_pegawai_teladan.findAll({
-        attributes: [
-          'tahun',
-          'triwulan',
-          'nama_kandidat',
-          'pertanyaan_1', 'pertanyaan_2', 'pertanyaan_3', 'pertanyaan_4', 'pertanyaan_5',
-          'pertanyaan_6', 'pertanyaan_7', 'pertanyaan_8', 'pertanyaan_9', 'pertanyaan_10',
-          'pertanyaan_11', 'pertanyaan_12', 'pertanyaan_13', 'pertanyaan_14', 'pertanyaan_15',
-          'pertanyaan_16', 'pertanyaan_17', 'pertanyaan_18', 'pertanyaan_19', 'pertanyaan_20',
-          'pertanyaan_21'
-        ],
-        where: {
-          nomor_kandidat: 'Kandidat 2'
-        },
-        order: [
-          ['tahun', 'DESC'],
-          ['triwulan', 'DESC']
-        ]
-      });
+      // Membuat query dasar
+      let query = `
+        SELECT 
+          nama_lengkap,
+          nip,
+          tahun,
+          triwulan,
+          nomor_kandidat,
+          nama_kandidat,
+          pertanyaan_1, pertanyaan_2, pertanyaan_3, pertanyaan_4, pertanyaan_5,
+          pertanyaan_6, pertanyaan_7, pertanyaan_8, pertanyaan_9, pertanyaan_10,
+          pertanyaan_11, pertanyaan_12, pertanyaan_13, pertanyaan_14, pertanyaan_15,
+          pertanyaan_16, pertanyaan_17, pertanyaan_18, pertanyaan_19, pertanyaan_20,
+          pertanyaan_21
+        FROM survey_pegawai_teladan
+        WHERE tahun LIKE ?`;
 
-      if (results.length === 0) {
-          return h.response({ error: 'Data not found' }).code(404);
+      const params = [`%${tahun}%`];
+
+      // Tambahkan kondisi tambahan berdasarkan triwulan dan nomor_kandidat jika tersedia
+      if (triwulan) {
+          query += ' AND triwulan = ?';
+          params.push(triwulan);
       }
 
-      return h.response(results).code(200);
-  } catch (err) {
-      console.error(err);
-      return h.response({ error: 'Failed to fetch data' }).code(500);
+      if (nomor_kandidat) {
+          query += ' AND nomor_kandidat = ?';
+          params.push(nomor_kandidat);
+      }
+
+      // Tambahkan order by dan grouping
+      query += ' ORDER BY tahun DESC, triwulan DESC';
+
+      // Eksekusi query
+      const [rows] = await pool.execute(query, params);
+
+      // Cek jika data ditemukan
+      if (rows.length === 0) {
+          return h.response({ error: 'Data tidak ditemukan' }).code(404);
+      }
+
+      // Return hasil
+      return h.response(rows).code(200);
+  } catch (error) {
+      console.error(error);
+      return h.response({ error: 'Terjadi kesalahan saat mengambil data' }).code(500);
   }
 };
 
-const getSurveyKandidat3 = async (request, h) => {
-  try {
-      const results = await survey_pegawai_teladan.findAll({
-        attributes: [
-          'tahun',
-          'triwulan',
-          'nama_kandidat',
-          'pertanyaan_1', 'pertanyaan_2', 'pertanyaan_3', 'pertanyaan_4', 'pertanyaan_5',
-          'pertanyaan_6', 'pertanyaan_7', 'pertanyaan_8', 'pertanyaan_9', 'pertanyaan_10',
-          'pertanyaan_11', 'pertanyaan_12', 'pertanyaan_13', 'pertanyaan_14', 'pertanyaan_15',
-          'pertanyaan_16', 'pertanyaan_17', 'pertanyaan_18', 'pertanyaan_19', 'pertanyaan_20',
-          'pertanyaan_21'
-        ],
-        where: {
-          nomor_kandidat: 'Kandidat 3'
-        },
-        order: [
-          ['tahun', 'DESC'],
-          ['triwulan', 'DESC']
-        ]
-      });
-
-      if (results.length === 0) {
-          return h.response({ error: 'Data not found' }).code(404);
-      }
-
-      return h.response(results).code(200);
-  } catch (err) {
-      console.error(err);
-      return h.response({ error: 'Failed to fetch data' }).code(500);
-  }
-};
 
   module.exports = { 
     insertSurveyHandler,
     totalSurveyHandler,
-    getSurveyKandidat1,
-    getSurveyKandidat2,
-    getSurveyKandidat3,
+    getSurveyKandidat,
     AVGSurveyPerKandidat,
     AVGConvert30
     };
