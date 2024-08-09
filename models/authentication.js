@@ -72,10 +72,10 @@ async function updateAuthenticationById(id, newData) {
     });
 
     if (result[0] > 0) {
-      console.log(`Data Authentication dengan ID ${id} berhasil diupdate.`);
+      console.log(`Data Authentication dengan NIP ${id} berhasil diupdate.`);
       return result;
     } else {
-      console.log(`Data Authentication dengan ID ${id} tidak ditemukan.`);
+      console.log(`Data Authentication dengan NIP ${id} tidak ditemukan.`);
       return null;
     }
   } catch (error) {
