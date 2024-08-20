@@ -19,7 +19,7 @@ pertanyaan_sys.hasMany(hasil_survey_sysbo, { foreignKey: 'id_pertanyaan', source
 
 
 const isiSurveyHandler = async (request, h) => {
-    const {triwulan, nama, jenis_kelamin, umur, pendidikan, masa_kerja, score_harapan, score_kinerja, label} = request.payload;
+    const {triwulan, nama, score_harapan, score_kinerja, label} = request.payload;
     const tahun = new Date().getFullYear();
 
     try {
@@ -40,10 +40,6 @@ const isiSurveyHandler = async (request, h) => {
             triwulan,
             tahun,
             nama,
-            jenis_kelamin,
-            umur,
-            pendidikan,
-            masa_kerja,
             score_harapan,
             score_kinerja
         });

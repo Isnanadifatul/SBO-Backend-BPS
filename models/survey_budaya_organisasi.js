@@ -24,29 +24,11 @@ const survey_budaya_organisasi = dbConnection.define('survey_budaya_organisasi',
   nama: {
     type: DataTypes.STRING,
   },
-  jenis_kelamin:{
-    type: DataTypes.STRING,
-  },
-  umur: {
-    type: DataTypes.INTEGER,
-  },
-  pendidikan: {
-    type: DataTypes.STRING,
-  },
-  masa_kerja: {
-    type: DataTypes.STRING,
-  },
   score_harapan: {
     type: DataTypes.JSON,
   },
   score_kinerja: {
     type: DataTypes.JSON,
-  },
-  triwulan: {
-    type: DataTypes.INTEGER,
-  },
-  tahun: {
-    type: DataTypes.INTEGER,
   }
   
 }, 

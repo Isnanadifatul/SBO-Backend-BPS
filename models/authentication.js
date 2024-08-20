@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require ('bcrypt');
 const connection = require('../db-config/connect');
 const { Sequelize, DataTypes } = require('sequelize');
 const mysql = require('mysql2/promise');
