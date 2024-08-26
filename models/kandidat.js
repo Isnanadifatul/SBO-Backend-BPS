@@ -22,9 +22,6 @@ const Kandidat = dbConnection.define('Kandidat', {
   },
   nama_kandidat: {
     type: DataTypes.STRING
-  },
-  foto: {
-    type: DataTypes.BLOB('long')
   }
 }, {
   tableName: 'kandidat',
@@ -32,24 +29,34 @@ const Kandidat = dbConnection.define('Kandidat', {
   timestamps: false
 });
 
-const updateKandidat = async (id, newData) => {
+const insertUser = async (triwulan, nomor_kandidat, nama_kandidat) => {
+  try {
+    const newUser = await Kandidat.create({ triwulan, nomor_kandidat, nama_kandidat});
+    console.log('User inserted:', newUser.toJSON());
+  } catch (error) {
+    console.error('Error inserting user:', error.message);
+    throw error;
+  }
+};
+
+async function updateKandidat(id, newData) {
   try {
     const result = await Kandidat.update(newData, {
       where: { id: id },
     });
 
     if (result[0] > 0) {
-      console.log(`Data dengan ID ${id} berhasil diupdate.`);
+      console.log(`Data dengan NO ${id} berhasil diupdate.`);
       return result;
     } else {
-      console.log(`Data dengan ID ${id} tidak ditemukan.`);
+      console.log(`Data dengan NO ${id} tidak ditemukan.`);
       return null;
     }
   } catch (error) {
     console.error('Error mengupdate data:', error);
     throw error;
   }
-};
+}
 
 const deleteKandidat = async (id) => {
   try {
@@ -70,4 +77,4 @@ const deleteKandidat = async (id) => {
   }
 };
 
-module.exports = { Kandidat, updateKandidat, deleteKandidat };
+module.exports = { Kandidat, insertUser, updateKandidat, deleteKandidat };

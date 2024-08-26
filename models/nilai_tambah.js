@@ -22,7 +22,13 @@ const nilai_tambah = dbConnection.define('nilai_tambah', {
     nama_kandidat:{
         type: DataTypes.STRING
     },
-    nilai_kip_app:{
+    nilai_kip_app_1:{
+        type: DataTypes.FLOAT
+    },
+    nilai_kip_app_2:{
+        type: DataTypes.FLOAT
+    },
+    nilai_kip_app_3:{
         type: DataTypes.FLOAT
     },
     nilai_presensi:{
@@ -38,9 +44,9 @@ const nilai_tambah = dbConnection.define('nilai_tambah', {
 
 //insert nilai tambah
 
-const insert = async (triwulan, nomor_kandidat, nama_kandidat, nilai_kip_app, nilai_presensi) => {
+const insert = async (triwulan, nomor_kandidat, nama_kandidat, nilai_kip_app_1, nilai_kip_app_2, nilai_kip_app_3, nilai_presensi) => {
     try {
-        const newUser = await nilai_tambah.create({triwulan, nomor_kandidat, nama_kandidat, nilai_kip_app, nilai_presensi});
+        const newUser = await nilai_tambah.create({triwulan, nomor_kandidat, nama_kandidat, nilai_kip_app_1, nilai_kip_app_2, nilai_kip_app_3, nilai_presensi});
         console.log('Nilai berhasil diinput', newUser.toJSON());
     }catch (error) {
         console.error('Input data error guys!!:', error.message);

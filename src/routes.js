@@ -18,6 +18,7 @@ const { getNilaiById, insertNilaiTambah, readNilai, updateNilai, deleteNilai} = 
 //authentication
 const {createAuthentication, loginHandler, logoutHandler, updateAuthenticationHandler, getAuth} = require('./handler-auth');
 const kandidat_handler= require('./kandidat_handler');
+const add_pemenang= require('./add_pemenang');
 const {getCombinedScores} = require('./handler_result');
 const {searchHandler} = require('./search_handler');
 //gap analisis sbo
@@ -27,6 +28,56 @@ const {isiSurveyHandler, getSurvey, getAverageScoresHandler, getSurveyDataByLabe
 
 
 const routes = [
+    //cms karyawan teladan
+    {
+        method: 'POST',
+        path: '/pemenang',
+        handler: add_pemenang.createSurvey,
+        options: {
+            payload: {
+                allow: 'multipart/form-data',
+                multipart: true,
+                output: 'stream',
+                parse: true,
+            },
+        },
+    },
+    {
+        method: 'GET',
+        path: '/pemenang',
+        handler: add_pemenang.getSurveys,
+    },
+    {
+        method: 'GET',
+        path: '/pemenang/{id}',
+        handler: add_pemenang.getSurveyById,
+    },
+    {
+        method: 'PUT',
+        path: '/pemenang/{id}',
+        handler: add_pemenang.updateSurvey,
+        options: {
+            payload: {
+                allow: 'multipart/form-data',
+                multipart: true,
+                output: 'stream',
+                parse: true,
+            },
+        },
+    },
+    {
+        method: 'DELETE',
+        path: '/pemenang/{id}',
+        handler: add_pemenang.deleteSurvey,
+        options: {
+            payload: {
+                allow: 'multipart/form-data',
+                multipart: true,
+                output: 'stream',
+                parse: true,
+            },
+        },
+    },
     //Search by triwulan & tahun
     {
         method: 'GET',
@@ -48,20 +99,17 @@ const routes = [
     },
     {
         method: 'GET',
-        path: '/kandidat/{id}',
+        path: '/kandidat',
         handler: kandidat_handler.getKandidat
+    },
+    {
+        method: 'GET',
+        path: '/kandidat/{id}',
+        handler: kandidat_handler.getKandidatid
     },
     {
         method: 'PUT',
         path: '/kandidat/{id}',
-        options: {
-            payload: {
-                maxBytes: 1048576,
-                output: 'data',
-                parse: true,
-                allow: 'multipart/form-data'
-            }
-        },
         handler: kandidat_handler.updateKandidatHandler
     },
     {
