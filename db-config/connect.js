@@ -1,21 +1,16 @@
 const {Sequelize} = require('sequelize');
 
 // database connection
-// const connection = new Sequelize(
-//   'umkmpal1_aang',
-//   'umkmpal1_aang',
-//   'Aang2024_',
-//   {
-//     host: 'umkmpalangan.my.id',
-//     port: 3306,
-//     dialect: 'mysql',
-//   },
-// );
-
-const connection = new Sequelize('sbo', 'root', '', {
-  host: 'localhost',
-  dialect: 'mysql'
-});
+const connection = new Sequelize(
+  'umkmpal1_aang',
+  'umkmpal1_aang',
+  'Aang2024_',
+  {
+    host: 'umkmpalangan.my.id',
+    port: 3306,
+    dialect: 'mysql',
+  },
+);
 
 if(!connection) {
   console.log("Error")

@@ -95,9 +95,9 @@ const updateAuthenticationHandler = async (request, h) => {
     const result = await updateAuthenticationById(id, newData);
 
     if (result) {
-      return h.response(`Data Authentication dengan ID ${id} berhasil diupdate.`).code(200);
+      return h.response(`Data Authentication dengan NIP ${id} berhasil diupdate.`).code(200);
     } else {
-      return h.response(`Data Authentication dengan ID ${id} tidak ditemukan.`).code(404);
+      return h.response(`Data Authentication dengan NIP ${id} tidak ditemukan.`).code(404);
     }
   } catch (error) {
     console.error('Error mengupdate data Authentication:', error);

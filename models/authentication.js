@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require ('bcrypt');
 const connection = require('../db-config/connect');
 const { Sequelize, DataTypes } = require('sequelize');
 const mysql = require('mysql2/promise');
@@ -68,14 +68,14 @@ async function updateAuthenticationById(id, newData) {
 
     // Lakukan update
     const result = await Authentication.update(newData, {
-      where: { id_auth: id },
+      where: { nip: id },
     });
 
     if (result[0] > 0) {
-      console.log(`Data Authentication dengan ID ${id} berhasil diupdate.`);
+      console.log(`Data Authentication dengan NIP ${id} berhasil diupdate.`);
       return result;
     } else {
-      console.log(`Data Authentication dengan ID ${id} tidak ditemukan.`);
+      console.log(`Data Authentication dengan NIP ${id} tidak ditemukan.`);
       return null;
     }
   } catch (error) {

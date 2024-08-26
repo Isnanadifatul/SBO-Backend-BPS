@@ -12,7 +12,7 @@ const calculateGap = (data, alias) => {
     const result = data.map(item => {
         const gap = parseFloat(item.y) - parseFloat(item.x);
         const konversi = (gap / 4) * 100;
-        const indikator = item[alias] ? item[alias].label : 'N/A';
+        const indikator = item[alias] ? item[alias].label : 'N/A'; // Mengambil pertanyaan dari tabel
 
         totalX += parseFloat(item.x);
         totalY += parseFloat(item.y);
